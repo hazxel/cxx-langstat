@@ -13,7 +13,7 @@ public:
         clang::ast_matchers::internal::Matcher<clang::NamedDecl> Names,
         std::string HeaderRegex);
     ~ClassInstantiationAnalysis(){
-        std::cout << "TIA dtor\n";
+        //std::cout << "CIA dtor\n";
     }
     std::string getShorthand() override {
         return ShorthandName;

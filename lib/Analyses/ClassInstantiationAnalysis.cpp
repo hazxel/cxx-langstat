@@ -55,7 +55,7 @@ ClassInstantiationAnalysis::ClassInstantiationAnalysis() :
 ClassInstantiationAnalysis::ClassInstantiationAnalysis(
     internal::Matcher<clang::NamedDecl> Names, std::string HeaderRegex) :
     Names(Names), HeaderRegex(HeaderRegex) {
-        std::cout << "TIA ctor\n";
+    //    std::cout << "CIA ctor\n";
 }
 
 // test code for instantiations:

@@ -10,7 +10,7 @@ class ConcurrencySupportLibraryAnalysis : public ClassInstantiationAnalysis {
 public:
     ConcurrencySupportLibraryAnalysis();
     ~ConcurrencySupportLibraryAnalysis(){
-        std::cout << "CSLA dtor\n";
+        // std::cout << "CSLA dtor\n";
     }
     std::string getShorthand() override {
         return ShorthandName;
