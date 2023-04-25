@@ -13,10 +13,15 @@
 # Editors & build dirs
 build/
 cmake-build-debug/
+CMakeFiles/
 .idea/
+.vscode/
 
 # Ignore AST files (for now)
 *.ast
+
+# Ignore lib files
+*.a
 
 # Ignore llvm-lit temporary output
 test/unit/**/Output

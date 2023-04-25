@@ -22,6 +22,7 @@ set(CLANGXX ${CMAKE_CXX_COMPILER})
 # -fcolor-diagnostics to enable clang colored output when using ninja
 set(CMAKE_CXX_FLAGS "-std=c++17 -fno-rtti -g -pedantic -O0 -Wall -Wextra -fcolor-diagnostics")
 message(STATUS "C++ flags: ${CMAKE_CXX_FLAGS}")
+# set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lc++ -lstdc++ -stdlib=libc++ -lc++abi")
 
 # Define executable to be built
 # When you add_executable() before set(CMAKE_CXX_STANDARD)
@@ -29,7 +30,7 @@ add_executable(${PROJECT_NAME} Runner.cpp)
 
 # ---- LLVM, Clang ----
 # Loads settings from external project LLVM
-find_package(LLVM REQUIRED CONFIG)
+find_package(LLVM 11.1 REQUIRED CONFIG)
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
 # Show where LLVM includes are
@@ -58,6 +59,7 @@ message(STATUS "LLVM libs: ${llvm_libs}")
 # Set clang_libs
 # https://jonasdevlieghere.com/understanding-the-clang-ast/
 set(clang_libs
+    # clangSupport #only for llvm@15
     clangFrontendTool clangRewriteFrontend clangDynamicASTMatchers
     clangTooling clangFrontend clangToolingCore clangASTMatchers
     clangParse clangDriver clangSerialization clangRewrite clangSema
