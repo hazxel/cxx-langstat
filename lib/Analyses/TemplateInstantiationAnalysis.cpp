@@ -139,17 +139,15 @@ void TemplateInstantiationAnalysis::extractFeatures() {
         // That they're matched twice is due to an bug in RecursiveASTVisitor:
         // https://lists.llvm.org/pipermail/cfe-dev/2021-February/067595.html
         // std::cout << Variables.size() << std::endl;
-        if(!Variables.empty()){
-            for(int i=1; i<Variables.size(); i++){
-                for(int j=0; j<i; j++){
-                    if(i!=j && Variables.at(i) == Variables.at(j)){
-                        Variables.erase(Variables.begin()+i);
-                        ClassImplicitInsts.erase(ClassImplicitInsts.begin()+i);
-                        i--;
-                    }
+        for(int i=1; i<Variables.size(); i++){
+            for(int j=0; j<i; j++){
+                if(i!=j && Variables.at(i) == Variables.at(j)){
+                    Variables.erase(Variables.begin()+i);
+                    ClassImplicitInsts.erase(ClassImplicitInsts.begin()+i);
+                    i--;
                 }
             }
-        }
+        } 
     }
 
     //

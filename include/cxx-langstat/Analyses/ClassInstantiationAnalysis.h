@@ -37,22 +37,9 @@ private:
     void extractFeatures();
     void analyzeFeatures() override;
     void processFeatures(nlohmann::ordered_json j) override;
-    // Get location of instantiation
-    template<typename T>
-    unsigned getInstantiationLocation(const Match<T>& Match, bool isImplicit);
-    // Specializations to get locations of class and func template uses.
-    template<>
-    unsigned getInstantiationLocation
-        (const Match<clang::ClassTemplateSpecializationDecl>& Match,
-            bool isImplicit);
-    template<>
-    unsigned getInstantiationLocation(const Match<clang::FunctionDecl>& Match,
-            bool isImplicit);
-    // Given matches representing the instantiations of some kind, gather
-    // for each instantiation the instantiation arguments.
-    template<typename T>
-    void gatherInstantiationData(Matches<T>& Insts, std::string InstKind,
-        bool AreImplicit);
+
+
+    void gatherData(const Matches<clang::DeclaratorDecl>& Matches);
     
     
     unsigned VariablesCounter = 0;

@@ -17,9 +17,9 @@ ConcurrencySupportLibraryAnalysis::ConcurrencySupportLibraryAnalysis() : ClassIn
         "std::atomic", // atomic operations
         "std::mutex", "std::lock_guard", "std::unique_lock", // locking
         "std::condition_variable", // condition variables
-        "std::future"
+        "std::future",
         // pthreads
-        // "pthread_t", "pthread_mutex_t", "pthread_cond_t", "pthread_rwlock_t"
+        "pthread_t", "pthread_mutex_t", "pthread_cond_t", "pthread_rwlock_t"
     ),
     // libc++:
     "thread|atomic|mutex|conditional_variable|future|"
@@ -54,14 +54,11 @@ void concurrencyTemplateTypeArgPrevalence(const ordered_json& in, ordered_json& 
     templateTypeArgPrevalence(in, out, NumRelTypes);
 }
 
-void ConcurrencySupportLibraryAnalysis::processFeatures(nlohmann::ordered_json j){
-    if(j.contains(ImplicitClassKey)){
-        ordered_json res1;
-        ordered_json res2;
-        concurrencyPrevalence(j.at(ImplicitClassKey), res1);
-        concurrencyTemplateTypeArgPrevalence(j.at(ImplicitClassKey), res2);
-        Statistics[ConcurrencyPrevalenceKey] = res1;
-        Statistics[ConcurrencyTypesPrevalenceKey] = res2;
+void ConcurrencySupportLibraryAnalysis::processFeatures(nlohmann::ordered_json j) {
+    if(j.contains(VarKey)){
+        ordered_json res;
+        templatePrevalence(j.at(VarKey), res);
+        Statistics[VarKey] = res;
     }
 }
 
