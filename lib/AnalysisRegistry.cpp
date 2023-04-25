@@ -5,7 +5,9 @@
 
 #include "cxx-langstat/Analyses/AlgorithmLibraryAnalysis.h"
 #include "cxx-langstat/Analyses/ClassInstantiationAnalysis.h"
+#include "cxx-langstat/Analyses/ClassMethodCallAnalysis.h"
 #include "cxx-langstat/Analyses/ConcurrencySupportLibraryAnalysis.h"
+#include "cxx-langstat/Analyses/ConcurrencySupportLibraryMethodAnalysis.h"
 #include "cxx-langstat/Analyses/ConstexprAnalysis.h"
 #include "cxx-langstat/Analyses/CyclomaticComplexityAnalysis.h"
 #include "cxx-langstat/Analyses/ContainerLibAnalysis.h"
@@ -49,8 +51,12 @@ void AnalysisRegistry::createFreshAnalyses(){
         Analyses.emplace_back(std::make_unique<ClassInstantiationAnalysis>());
     if(Options.EnabledAnalyses.contains("cla"))
         Analyses.emplace_back(std::make_unique<ContainerLibAnalysis>());
+    if(Options.EnabledAnalyses.contains("cmca"))
+        Analyses.emplace_back(std::make_unique<ClassMethodCallAnalysis>());
     if(Options.EnabledAnalyses.contains("csla"))
         Analyses.emplace_back(std::make_unique<ConcurrencySupportLibraryAnalysis>());
+    if(Options.EnabledAnalyses.contains("cslma"))
+        Analyses.emplace_back(std::make_unique<ConcurrencySupportLibraryMethodAnalysis>());
     if(Options.EnabledAnalyses.contains("fpa"))
         Analyses.emplace_back(std::make_unique<FunctionParameterAnalysis>());
     if(Options.EnabledAnalyses.contains("lda"))

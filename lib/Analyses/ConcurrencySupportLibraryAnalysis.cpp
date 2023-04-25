@@ -4,8 +4,6 @@
 #include "cxx-langstat/Utils.h"
 
 using ordered_json = nlohmann::ordered_json;
-template<typename T>
-using StringMap = std::map<std::string, T>;
 
 //-----------------------------------------------------------------------------
 
@@ -25,39 +23,20 @@ ConcurrencySupportLibraryAnalysis::ConcurrencySupportLibraryAnalysis() : ClassIn
     "thread|atomic|mutex|conditional_variable|future|"
     // libstdc++
     "bits/std_thread.h|std/atomic|bits/std_mutex.h|std/condition_variable|std/future") {
-    std::cout << "CSLA ctor\n";
+    // std::cout << "CSLA ctor\n";
 }
 
-namespace {
-    const StringMap<int> NumRelTypes = {
-        // no constexpr support for map, also, can't use non-compile-time
-        // expressions in inline initialization of static data member
-        {"std::cout", 0},
-        // standard library concurrency supports
-        {"std::thread", 0}, {"std::jthread", 0}, {"std::atomic", 1},
-        {"std::mutex", 0}, {"std::lock_guard", 1}, {"std::unique_lock", 1},
-        {"std::condition_variable", 0}, {"std::future", 1}
-        // pthread
-        // {"pthread_t", 0}, {"pthread_mutex_t", 0}, {"pthread_cond_t", 0},
-        // {"pthread_rwlock_t", 0}
-    };
-} // namespace
 
 // Gathers data on how often each utility template was used.
 void concurrencyPrevalence(const ordered_json& in, ordered_json& out){
     templatePrevalence(in, out);
 }
 
-// For each container template, gives statistics on how often each instantiation
-// was used by a (member) variable.
-void concurrencyTemplateTypeArgPrevalence(const ordered_json& in, ordered_json& out){
-    templateTypeArgPrevalence(in, out, NumRelTypes);
-}
 
 void ConcurrencySupportLibraryAnalysis::processFeatures(nlohmann::ordered_json j) {
     if(j.contains(VarKey)){
         ordered_json res;
-        templatePrevalence(j.at(VarKey), res);
+        concurrencyPrevalence(j.at(VarKey), res);
         Statistics[VarKey] = res;
     }
 }

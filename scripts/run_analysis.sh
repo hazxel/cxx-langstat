@@ -19,8 +19,8 @@ find "$@" -type f -name "*.ast" | cpio -pdm "$ast_out_dir"
 #         cp -p "$file" "$1/${file#$2}"
 #     done' sh "$ast_out_dir" {} +
 
-"$langstat" --analyses=csla -emit-features -indir "$ast_out_dir" -outdir "$json_out_dir" --  
-"$langstat" --analyses=csla -emit-statistics -indir "$json_out_dir" -out "$json_out_dir"/"$statistics"
+"$langstat" --analyses=cslma -emit-features -indir "$ast_out_dir" -outdir "$json_out_dir" --  
+"$langstat" --analyses=cslma -emit-statistics -indir "$json_out_dir" -out "$json_out_dir"/"$statistics"
 
 echo "\n statistics:\n"
 tail -n 20 "$json_out_dir"/"$statistics" # | jq -r '.[] | [.name, .value] | @csv' 
