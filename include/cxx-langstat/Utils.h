@@ -2,8 +2,14 @@
 #define UTILS_H
 
 #include <iostream>
+#include <map>
 
-// #include "llvm/ADT/StringRef.h"
+#include "llvm/ADT/StringRef.h"
+#include "clang/AST/DeclTemplate.h"
+#include "clang/ASTMatchers/ASTMatchFinder.h"
+#include "nlohmann/json.hpp"
+#include "cxx-langstat/MatchingExtractor.h"
+
 
 //-----------------------------------------------------------------------------
 // For a match whose node is a decl that can be a nameddecl, return its
@@ -17,6 +23,7 @@ std::string getMatchDeclName(const Match<T>& Match){
         return "INVALID";
     }
 }
+
 // For a list containing matches that are derived from NamedDecl, print them.
 template<typename T>
 void printMatches(std::string text, const Matches<T>& Matches){
@@ -80,6 +87,30 @@ void removeDuplicateMatches(Matches<T>& Matches){
         }
     }
 }
+
+
+const clang::TemplateArgumentList*
+getTemplateArgs(const Match<clang::ClassTemplateSpecializationDecl>& Match);
+
+
+const clang::TemplateArgumentList*
+getTemplateArgs(const Match<clang::VarTemplateSpecializationDecl>& Match);
+
+
+const clang::TemplateArgumentList*
+getTemplateArgs(const Match<clang::FunctionDecl>& Match);
+
+
+int getNumRelevantTypes(llvm::StringRef Type, const std::map<std::string, int>& SM);
+
+
+std::string getRelevantTypesAsString(llvm::StringRef Type, nlohmann::json Types, const std::map<std::string, int>& SM);
+
+
+void templatePrevalence(const nlohmann::ordered_json& in, nlohmann::ordered_json& out);
+
+
+void templateTypeArgPrevalence(const nlohmann::ordered_json& in, nlohmann::ordered_json& out, const std::map<std::string, int>& SM);
 
 //-----------------------------------------------------------------------------
 

@@ -8,6 +8,8 @@ using namespace clang;
 using namespace clang::ast_matchers;
 using json = nlohmann::json;
 using ordered_json = nlohmann::ordered_json;
+template<typename T>
+using StringMap = std::map<std::string, T>;
 
 //-----------------------------------------------------------------------------
 // How often were constructs from standard library used (like vector, array,

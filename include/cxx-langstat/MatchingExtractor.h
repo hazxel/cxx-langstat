@@ -51,9 +51,6 @@ std::string Match<T>::getDeclName(const clang::PrintingPolicy& Policy){
     }
 }
 
-// template<>
-// std::string
-
 
 template<typename T>
 using Matches = std::vector<Match<T>>; // allows to do Matches<T>

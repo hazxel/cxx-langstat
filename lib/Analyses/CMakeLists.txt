@@ -1,5 +1,7 @@
 add_library(Analyses
     AlgorithmLibraryAnalysis.cpp
+    ClassInstantiationAnalysis.cpp
+    ConcurrencySupportLibraryAnalysis.cpp
     ConstexprAnalysis.cpp
     ContainerLibAnalysis.cpp
     CyclomaticComplexityAnalysis.cpp
@@ -12,4 +14,5 @@ add_library(Analyses
     UsingAnalysis.cpp
     UtilityLibAnalysis.cpp
     VariableTemplateAnalysis.cpp
+    ../Utils.cpp
 )
