@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <cstring>
 #include <iostream>
 
 #include "cxx-langstat/Analyses/ClassMethodCallAnalysis.h"
@@ -50,14 +51,20 @@ void ClassMethodCallAnalysis::gatherData(const Matches<clang::CXXMemberCallExpr>
     pp.Bool = true;
 
     for (auto match : matches) {
-        ordered_json j;
-        // v.push_back(match.getDeclName);
         string callee_type = match.Node->getObjectType().getAsString(pp);
         string called_func = match.Node->getMethodDecl()->getQualifiedNameAsString();
         unsigned line_num = Context->getSourceManager().getSpellingLineNumber(match.Node->getExprLoc());
         auto persumed_loc = Context->getSourceManager().getPresumedLoc(match.Node->getExprLoc());
+        const char* file_name = persumed_loc.getFilename();
+
+        // filter out method calls in library files
+        if (strstr(file_name, "llvm") != nullptr) {
+            continue;
+        }
+
+        ordered_json j;
         j[feature_method_name_key_] = called_func;
-        j[feature_file_name_key_] = persumed_loc.getFilename();
+        j[feature_file_name_key_] = file_name;
         j[feature_line_num_key_] = line_num;
         js[callee_type].emplace_back(j);
     }
