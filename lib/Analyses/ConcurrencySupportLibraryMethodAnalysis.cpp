@@ -12,7 +12,7 @@ ConcurrencySupportLibraryMethodAnalysis::ConcurrencySupportLibraryMethodAnalysis
         "std::atomic", // atomic operations
         "std::mutex", "std::lock_guard", "std::unique_lock", // locking
         "std::condition_variable", // condition variables
-        "std::future",
+        "std::promise", "std::future", "std::shared_future",// futures
         // pthreads
         "pthread_t", "pthread_mutex_t", "pthread_cond_t", "pthread_rwlock_t"
     ),
@@ -20,9 +20,7 @@ ConcurrencySupportLibraryMethodAnalysis::ConcurrencySupportLibraryMethodAnalysis
     "thread|atomic|mutex|conditional_variable|future|"
     // libstdc++
     "bits/std_thread.h|std/atomic|bits/std_mutex.h|std/condition_variable|std/future"
-) {
-    std::cout << "CSLMA ctor\n";
-}
+) {}
 
 //-----------------------------------------------------------------------------
 

@@ -18,17 +18,21 @@ public:
 private:
     void extractFeatures();
     void gatherData(const Matches<clang::CXXMemberCallExpr>& matches);
+    void gatherData(const Matches<clang::VarDecl>& matches);
     void analyzeFeatures() override;
     void processFeatures(nlohmann::ordered_json j) override;
     void funcPrevalence(const nlohmann::ordered_json &in, nlohmann::ordered_json& res);
+    void constructorPrevalence(const nlohmann::ordered_json &in, nlohmann::ordered_json& res);
 
 
     clang::ast_matchers::internal::Matcher<clang::NamedDecl> names_;
     std::string header_regex_;
     Matches<clang::CXXMemberCallExpr> methodcalls_;
+    Matches<clang::VarDecl> constructorcalls_;
     static constexpr auto ShorthandName = "cmca";
 
 protected:
+    const std::string constructor_call_key_ = "constructor calls";
     const std::string method_call_key_ = "method calls";
     const std::string feature_method_name_key_ = "called_method";
     const std::string feature_file_name_key_ = "file_name";
