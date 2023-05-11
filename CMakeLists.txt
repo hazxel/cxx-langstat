@@ -28,7 +28,7 @@ message(STATUS "C++ flags: ${CMAKE_CXX_FLAGS}")
 # When you add_executable() before set(CMAKE_CXX_STANDARD)
 add_executable(${PROJECT_NAME} Runner.cpp)
 
-# ---- LLVM, Clang ----
+# ---- LLVM ----
 # Loads settings from external project LLVM
 find_package(LLVM 11.1 REQUIRED CONFIG)
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
@@ -36,7 +36,6 @@ message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
 # Show where LLVM includes are
 include_directories(${LLVM_INCLUDE_DIRS})
 message(STATUS "Found LLVM include dirs: ${LLVM_INCLUDE_DIRS}")
-
 # Find llvm-config
 message(STATUS "llvm definitions: ${LLVM_DEFINITIONS}")
 message(STATUS "llvmtools binary dir ${LLVM_TOOLS_BINARY_DIR}")
@@ -47,15 +46,18 @@ execute_process(COMMAND ${llvm-config} --libs # --system-libs--ignore-libllvm
     OUTPUT_VARIABLE llvm_libs
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
-
-# find_package(clang REQUIRED CONFIG)
-# message(STATUS "Using ClangConfig.cmake in: ${clang_DIR}")
-
 # message(STATUS "LLVM libs: ${llvm_libs}")
 string(REPLACE "-l" "" llvm_libs ${llvm_libs})
 string(REPLACE " " ";" llvm_libs ${llvm_libs})
 message(STATUS "LLVM libs: ${llvm_libs}")
 
+# ---- Clang ----
+# Loads settings from external project Clang
+find_package(Clang REQUIRED CONFIG)
+message(STATUS "Found Clang")
+message(STATUS "Using ClangConfig.cmake in: ${Clang_DIR}")
+include_directories(${CLANG_INCLUDE_DIRS})
+message(STATUS "Found Clang include dirs: ${CLANG_INCLUDE_DIRS}")
 # Set clang_libs
 # https://jonasdevlieghere.com/understanding-the-clang-ast/
 set(clang_libs
@@ -65,7 +67,7 @@ set(clang_libs
     clangParse clangDriver clangSerialization clangRewrite clangSema
     clangEdit clangAnalysis clangAST clangLex clangBasic
 )
-# message(STATUS "Clang libs: $${clang_libs}")
+message(STATUS "Clang libs: ${clang_libs}")
 
 # --- Where to look for includes ----
 # Includes from cxx-langstat thus are #include "cxx-langstat/<header>"
