@@ -15,8 +15,12 @@ ConcurrencySupportLibraryMethodAnalysis::ConcurrencySupportLibraryMethodAnalysis
         "std::promise", "std::future", "std::shared_future",// futures
         // pthreads
         "pthread_t", "pthread_mutex_t", "pthread_cond_t", "pthread_rwlock_t",
+        "pthread_create", "pthread_join", "pthread_detach", "pthread_exit", "pthread_cancel",
         // openmp
-        "omp_lock_t", "omp_nest_lock_t", "omp_sched_t", "omp_sched_t", "omp_proc_bind_t"
+        "omp_lock_t", "omp_nest_lock_t", "omp_sched_t", "omp_sched_t", "omp_proc_bind_t",
+        "omp_init_lock", "omp_init_nest_lock", "omp_destroy_lock", "omp_destroy_nest_lock",
+        "omp_set_lock", "omp_set_nest_lock", "omp_unset_lock", "omp_unset_nest_lock",
+        "omp_get_thread_num", "omp_get_num_threads", "omp_get_max_threads", "omp_get_num_procs"
     ),
     // libc++:
     "thread|atomic|mutex|conditional_variable|future|"
