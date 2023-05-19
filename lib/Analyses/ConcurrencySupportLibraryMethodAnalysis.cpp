@@ -14,12 +14,18 @@ ConcurrencySupportLibraryMethodAnalysis::ConcurrencySupportLibraryMethodAnalysis
         "std::condition_variable", // condition variables
         "std::promise", "std::future", "std::shared_future",// futures
         // pthreads
-        "pthread_t", "pthread_mutex_t", "pthread_cond_t", "pthread_rwlock_t"
+        "pthread_t", "pthread_mutex_t", "pthread_cond_t", "pthread_rwlock_t",
+        // openmp
+        "omp_lock_t", "omp_nest_lock_t", "omp_sched_t", "omp_sched_t", "omp_proc_bind_t"
     ),
     // libc++:
     "thread|atomic|mutex|conditional_variable|future|"
     // libstdc++
-    "bits/std_thread.h|std/atomic|bits/std_mutex.h|std/condition_variable|std/future"
+    "bits/std_thread.h|std/atomic|bits/std_mutex.h|std/condition_variable|std/future|"
+    // pthreads
+    "pthread.h|"
+    // openmp
+    "omp.h"
 ) {}
 
 //-----------------------------------------------------------------------------

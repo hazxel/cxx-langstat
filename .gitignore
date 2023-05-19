@@ -28,3 +28,6 @@ test/unit/**/Output
 
 # Ignore json files
 *.json
+
+# Ignore binary files
+a.out
