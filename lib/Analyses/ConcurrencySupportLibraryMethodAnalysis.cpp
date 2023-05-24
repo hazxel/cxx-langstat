@@ -33,7 +33,20 @@ ConcurrencySupportLibraryMethodAnalysis::ConcurrencySupportLibraryMethodAnalysis
         "boost::barrier", "boost::latch", "boost::countdown_latch", "boost::packaged_task",
         "boost::async", "boost::launch",
         // PPL
-        "Concurrency::critical_section", "Concurrency::reader_writer_lock", "Concurrency::reader_writer_lock"
+        "Concurrency::critical_section", "Concurrency::reader_writer_lock", "Concurrency::reader_writer_lock",
+        // opencl
+        "clCreateCommandQueue", "clCreateContext", "clCreateProgramWithSource", "clCreateKernel",
+        // cuda
+        "cudaMalloc", "cudaFree", "cudaMemcpy", "cudaMemcpyAsync", "cudaMemcpy2D", "cudaMemcpy2DAsync",
+        // openacc
+        "acc_init", "acc_shutdown", "acc_get_num_devices", "acc_get_device_type", "acc_set_device_type",
+        // sycl
+        "cl::sycl::queue", "cl::sycl::buffer", "cl::sycl::device", "cl::sycl::context", "cl::sycl::kernel",
+        "cl::sycl::program", "cl::sycl::event", "cl::sycl::nd_range", "cl::sycl::range", "cl::sycl::id",
+        "cl::sycl::accessor", "cl::sycl::access::mode", "cl::sycl::access::target", "cl::sycl::access::placeholder",
+        "cl::sycl::access::target::global_buffer", "cl::sycl::access::target::constant_buffer",
+        "cl::sycl::access::target::local", "cl::sycl::access::target::host_buffer",
+        "cl::sycl::access::target::image", "cl::sycl::access::target::image_array"
     ),
     // libc++:
     "thread|atomic|mutex|conditional_variable|future|"
@@ -59,6 +72,14 @@ ConcurrencySupportLibraryMethodAnalysis::ConcurrencySupportLibraryMethodAnalysis
     "boost/thread/launch.hpp|"
     // PPL
     "ppl.h"
+    // opencl
+    "CL/cl.h|"
+    // cuda
+    "cuda_runtime.h|"
+    // openacc
+    "openacc.h|"
+    // sycl
+    "CL/sycl.hpp"
 ) {}
 
 

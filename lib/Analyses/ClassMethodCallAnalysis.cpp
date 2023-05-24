@@ -159,13 +159,18 @@ void ClassMethodCallAnalysis::processFeatures(nlohmann::ordered_json j){
     }
 }
 
+static bool isDependentHeader(const std::string& header) {
+    return header.find("/usr/lib") != string::npos 
+        || header.find("llvm") != string::npos
+        || header.find("gcc") != string::npos
+        || header.find("homebrew") != string::npos;
+}
+
 void ClassMethodCallAnalysis::funcPrevalence(const ordered_json& in, ordered_json& res){
     std::map<std::string, unsigned> m;
     for (auto& [func_name, func_list] : in.items()) {
         for (auto& func : func_list) {
-            if (func[feature_file_name_key_].get<string>().find("llvm") != string::npos
-             || func[feature_file_name_key_].get<string>().find("gcc") != string::npos
-             || func[feature_file_name_key_].get<string>().find("homebrew") != string::npos) {
+            if (isDependentHeader(func[feature_file_name_key_].get<string>())) {
                 continue;
             }
             m[func[feature_method_name_key_]]++;
@@ -178,9 +183,7 @@ void ClassMethodCallAnalysis::methodPrevalence(const ordered_json& in, ordered_j
     std::map<std::string, std::map<std::string, unsigned>> m;
     for (auto& [type_name, func_list] : in.items()) {
         for (auto& func : func_list) {
-            if (func[feature_file_name_key_].get<string>().find("llvm") != string::npos
-             || func[feature_file_name_key_].get<string>().find("gcc") != string::npos
-             || func[feature_file_name_key_].get<string>().find("homebrew") != string::npos) {
+            if (isDependentHeader(func[feature_file_name_key_].get<string>())) {
                 continue;
             }
             m[type_name][func[feature_method_name_key_]]++;
@@ -193,9 +196,7 @@ void ClassMethodCallAnalysis::constructorPrevalence(const ordered_json& in, orde
     std::map<std::string, int> m;
     for (auto& [type_name, call_list] : in.items()) {
         for (auto& call : call_list) {
-            if (call[feature_file_name_key_].get<string>().find("llvm") == string::npos
-             || call[feature_file_name_key_].get<string>().find("gcc") == string::npos
-             || call[feature_file_name_key_].get<string>().find("homebrew") == string::npos) {
+            if (isDependentHeader(call[feature_file_name_key_].get<string>())) {
                 continue;
             }
             m[type_name]++;
