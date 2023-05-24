@@ -164,7 +164,8 @@ void ClassMethodCallAnalysis::funcPrevalence(const ordered_json& in, ordered_jso
     for (auto& [func_name, func_list] : in.items()) {
         for (auto& func : func_list) {
             if (func[feature_file_name_key_].get<string>().find("llvm") != string::npos
-                || func[feature_file_name_key_].get<string>().find("gcc") != string::npos) {
+             || func[feature_file_name_key_].get<string>().find("gcc") != string::npos
+             || func[feature_file_name_key_].get<string>().find("homebrew") != string::npos) {
                 continue;
             }
             m[func[feature_method_name_key_]]++;
@@ -178,7 +179,8 @@ void ClassMethodCallAnalysis::methodPrevalence(const ordered_json& in, ordered_j
     for (auto& [type_name, func_list] : in.items()) {
         for (auto& func : func_list) {
             if (func[feature_file_name_key_].get<string>().find("llvm") != string::npos
-                || func[feature_file_name_key_].get<string>().find("gcc") != string::npos) {
+             || func[feature_file_name_key_].get<string>().find("gcc") != string::npos
+             || func[feature_file_name_key_].get<string>().find("homebrew") != string::npos) {
                 continue;
             }
             m[type_name][func[feature_method_name_key_]]++;
@@ -192,9 +194,11 @@ void ClassMethodCallAnalysis::constructorPrevalence(const ordered_json& in, orde
     for (auto& [type_name, call_list] : in.items()) {
         for (auto& call : call_list) {
             if (call[feature_file_name_key_].get<string>().find("llvm") == string::npos
-                || call[feature_file_name_key_].get<string>().find("gcc") == string::npos) {
-                m[type_name]++;
+             || call[feature_file_name_key_].get<string>().find("gcc") == string::npos
+             || call[feature_file_name_key_].get<string>().find("homebrew") == string::npos) {
+                continue;
             }
+            m[type_name]++;
         }
     }
     res = m;
