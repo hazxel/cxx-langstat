@@ -2,6 +2,8 @@
 #include "clang/ASTMatchers/ASTMatchers.h"
 
 #include <vector>
+#include <map>
+#include <unordered_set>
 #include <string>
 #include <cstring>
 #include <iostream>
@@ -159,18 +161,28 @@ void ClassMethodCallAnalysis::processFeatures(nlohmann::ordered_json j){
     }
 }
 
-static bool isDependentHeader(const std::string& header) {
+static bool inline isDependentHeader(const std::string& header) {
     return header.find("/usr/lib") != string::npos 
         || header.find("llvm") != string::npos
         || header.find("gcc") != string::npos
         || header.find("homebrew") != string::npos;
 }
 
+static bool inline isDuplicated(std::unordered_set<std::string>& s, const std::string& str) {
+    if (s.find(str) != s.end()) {
+        return true;
+    }
+    s.insert(str);
+    return false;
+}
+
 void ClassMethodCallAnalysis::funcPrevalence(const ordered_json& in, ordered_json& res){
     std::map<std::string, unsigned> m;
+    std::unordered_set<std::string> s;
     for (auto& [func_name, func_list] : in.items()) {
         for (auto& func : func_list) {
-            if (isDependentHeader(func[feature_file_name_key_].get<string>())) {
+            if (isDependentHeader(func[feature_file_name_key_].get<string>())
+                || isDuplicated(s, func_name + func[feature_file_name_key_].get<string>() + func[feature_line_num_key_].get<string>())) {
                 continue;
             }
             m[func[feature_method_name_key_]]++;
@@ -181,9 +193,11 @@ void ClassMethodCallAnalysis::funcPrevalence(const ordered_json& in, ordered_jso
 
 void ClassMethodCallAnalysis::methodPrevalence(const ordered_json& in, ordered_json& res){
     std::map<std::string, std::map<std::string, unsigned>> m;
+    std::unordered_set<std::string> s;
     for (auto& [type_name, func_list] : in.items()) {
         for (auto& func : func_list) {
-            if (isDependentHeader(func[feature_file_name_key_].get<string>())) {
+            if (isDependentHeader(func[feature_file_name_key_].get<string>())
+                || isDuplicated(s, type_name + func[feature_method_name_key_].get<string>() + func[feature_file_name_key_].get<string>() + func[feature_line_num_key_].get<string>())) {
                 continue;
             }
             m[type_name][func[feature_method_name_key_]]++;
@@ -194,9 +208,11 @@ void ClassMethodCallAnalysis::methodPrevalence(const ordered_json& in, ordered_j
 
 void ClassMethodCallAnalysis::constructorPrevalence(const ordered_json& in, ordered_json& res){
     std::map<std::string, int> m;
+    std::unordered_set<std::string> s;
     for (auto& [type_name, call_list] : in.items()) {
         for (auto& call : call_list) {
-            if (isDependentHeader(call[feature_file_name_key_].get<string>())) {
+            if (isDependentHeader(call[feature_file_name_key_].get<string>())
+                || isDuplicated(s, type_name + call[feature_file_name_key_].get<string>() + call[feature_line_num_key_].get<string>())) {
                 continue;
             }
             m[type_name]++;
