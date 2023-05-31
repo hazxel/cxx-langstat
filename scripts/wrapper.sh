@@ -1,1 +1,1 @@
-/Users/boyan/Documents/ETH-Courses/Thesis/cxx-langstat/scripts/generate-ast.sh clang++ "$@"
+/home/boyan/cxx-langstat/scripts/generate-ast.sh clang++ -O0 -Xclang -fno-inline-functions -disable-llvm-optzns "$@"
