@@ -19,6 +19,8 @@ using std::vector;
 using std::cout;
 using std::endl;
 
+auto ClassMethodCallAnalysis::deduplicator_ = std::unordered_set<string>();
+
 // FIXME:
 // Use nontrivial destructor if necessary
 ClassMethodCallAnalysis::ClassMethodCallAnalysis() :
@@ -168,11 +170,11 @@ static bool inline isDependentHeader(const std::string& header) {
         || header.find("homebrew") != string::npos;
 }
 
-static bool inline isDuplicated(std::unordered_set<std::string>& s, const std::string& str) {
-    if (s.find(str) != s.end()) {
+bool ClassMethodCallAnalysis::isDuplicated(const std::string& str) {
+    if (deduplicator_.find(str) != deduplicator_.end()) {
         return true;
     }
-    s.insert(str);
+    deduplicator_.insert(str);
     return false;
 }
 
@@ -182,7 +184,7 @@ void ClassMethodCallAnalysis::funcPrevalence(const ordered_json& in, ordered_jso
     for (auto& [func_name, func_list] : in.items()) {
         for (auto& func : func_list) {
             if (isDependentHeader(func[feature_file_name_key_].get<string>())
-                || isDuplicated(s, func_name + func[feature_file_name_key_].get<string>() + func[feature_line_num_key_].get<string>())) {
+                || isDuplicated(func_name + func[feature_file_name_key_].get<string>() + func[feature_line_num_key_].get<string>())) {
                 continue;
             }
             m[func[feature_method_name_key_]]++;
@@ -197,7 +199,7 @@ void ClassMethodCallAnalysis::methodPrevalence(const ordered_json& in, ordered_j
     for (auto& [type_name, func_list] : in.items()) {
         for (auto& func : func_list) {
             if (isDependentHeader(func[feature_file_name_key_].get<string>())
-                || isDuplicated(s, type_name + func[feature_method_name_key_].get<string>() + func[feature_file_name_key_].get<string>() + func[feature_line_num_key_].get<string>())) {
+                || isDuplicated(type_name + func[feature_method_name_key_].get<string>() + func[feature_file_name_key_].get<string>() + func[feature_line_num_key_].get<string>())) {
                 continue;
             }
             m[type_name][func[feature_method_name_key_]]++;
@@ -212,7 +214,7 @@ void ClassMethodCallAnalysis::constructorPrevalence(const ordered_json& in, orde
     for (auto& [type_name, call_list] : in.items()) {
         for (auto& call : call_list) {
             if (isDependentHeader(call[feature_file_name_key_].get<string>())
-                || isDuplicated(s, type_name + call[feature_file_name_key_].get<string>() + call[feature_line_num_key_].get<string>())) {
+                || isDuplicated(type_name + call[feature_file_name_key_].get<string>() + call[feature_line_num_key_].get<string>())) {
                 continue;
             }
             m[type_name]++;

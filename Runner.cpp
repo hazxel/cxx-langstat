@@ -293,7 +293,7 @@ int main(int argc, char** argv){
     }
 
     // Now we know all input and output files
-    std::cout << "input files(" << InputFiles.size() << "): ";
+    std::cout << "input files(" << InputFiles.size() << "): " << std::endl;
     for(const auto& InputFile : InputFiles){
         std::cout << InputFile << '\n';
         if(StringRef(InputFile).consume_back("/")){
