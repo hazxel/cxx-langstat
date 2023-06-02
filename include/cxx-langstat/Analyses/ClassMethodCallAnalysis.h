@@ -4,6 +4,7 @@
 
 #include <unordered_set>
 #include "cxx-langstat/Analysis.h"
+#include "cxx-langstat/Deduplicator.h"
 
 //-----------------------------------------------------------------------------
 
@@ -28,7 +29,7 @@ private:
     void methodPrevalence(const nlohmann::ordered_json &in, nlohmann::ordered_json& res);
     static bool isDuplicated(const std::string& str);
 
-    static std::unordered_set<std::string> deduplicator_; // need to remember the code that already been counted
+    static Deduplicator deduplicator_;
     clang::ast_matchers::internal::Matcher<clang::NamedDecl> names_;
     std::string header_regex_;
     Matches<clang::CXXMemberCallExpr> methodcalls_;

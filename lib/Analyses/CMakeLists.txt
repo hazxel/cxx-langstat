@@ -16,5 +16,4 @@ add_library(Analyses
     UsingAnalysis.cpp
     UtilityLibAnalysis.cpp
     VariableTemplateAnalysis.cpp
-    ../Utils.cpp
 )

@@ -92,6 +92,8 @@ target_link_libraries(${PROJECT_NAME}
     AnalysisList
     Analyses
     MatchingExtractor
+    Deduplicator
+    Utils
     ${llvm_libs} ${clang_libs}
 )
 
