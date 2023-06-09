@@ -171,7 +171,6 @@ int CXXLangstatMain(std::vector<std::string> InputFiles,
         std::ofstream o(Registry->Options.OutputFiles[0]);
         AllFilesAllStatistics["Summary"] = Summary;
         o << AllFilesAllStatistics.dump(4) << std::endl;
-        //o << Summary.dump(4) << std::endl;
     }
 
     delete Registry;
