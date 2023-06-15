@@ -19,6 +19,14 @@ ConcurrencySupportLibraryMethodAnalysis::ConcurrencySupportLibraryMethodAnalysis
         "omp_init_lock", "omp_init_nest_lock", "omp_destroy_lock", "omp_destroy_nest_lock",
         "omp_set_lock", "omp_set_nest_lock", "omp_unset_lock", "omp_unset_nest_lock",
         "omp_get_thread_num", "omp_get_num_threads", "omp_get_max_threads", "omp_get_num_procs",
+        // "___kmpc_critical", "___kmpc_end_critical", "___kmpc_barrier", "___kmpc_critical_name",
+        // "___kmpc_end_critical_name", "___kmpc_atomic_start", "___kmpc_atomic_end",
+        // "___kmpc_fork_call", "___kmpc_for_static_init_4", "___kmpc_for_static_init_4u",
+        // "GOMP_parallel_start", "GOMP_parallel_end", "GOMP_barrier", "GOMP_critical_start", "GOMP_critical_end",
+        // "GOMP_critical_name_start", "GOMP_critical_name_end", "GOMP_atomic_start", "GOMP_atomic_end",
+        // "GOMP_loop_static_start", "GOMP_loop_dynamic_start", "GOMP_loop_guided_start", "GOMP_loop_runtime_start",
+        // "GOMP_loop_ordered_static_start", "GOMP_loop_ordered_dynamic_start", "GOMP_loop_ordered_guided_start",
+        // "GOMP_loop_ordered_runtime_start", "GOMP_loop_end", "GOMP_loop_end_nowait", "GOMP_loop_end_cancel",
         // mpi
         "MPI_Init", "MPI_Finalize", "MPI_Comm_size", "MPI_Comm_rank", "MPI_Send", "MPI_Recv",
         // TBB

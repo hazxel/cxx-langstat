@@ -1,6 +1,6 @@
 #include "cxx-langstat/Deduplicator.h"
 
-bool Deduplicator::isDuplicated(std::string key) {
+bool Deduplicator::isDuplicated(const std::string& key) {
     if (duplicates_.find(key) != duplicates_.end()) {
         return true;
     }

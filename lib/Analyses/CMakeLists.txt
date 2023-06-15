@@ -11,6 +11,7 @@ add_library(Analyses
     LoopDepthAnalysis.cpp
     LoopKindAnalysis.cpp
     MoveSemanticsAnalysis.cpp
+    OMPExecutableDirectiveAnalysis.cpp
     TemplateInstantiationAnalysis.cpp
     TemplateParameterAnalysis
     UsingAnalysis.cpp

@@ -4,7 +4,7 @@ langstat="/Users/boyan/Documents/ETH-Courses/Thesis/cxx-langstat/build/cxx-langs
 
 ast_out_dir="/Users/boyan/Documents/ETH-Courses/Thesis/ast-out"
 json_out_dir="/Users/boyan/Documents/ETH-Courses/Thesis/json-out"
-statistics_out_dir="/Users/boyan/Documents/ETH-Courses/Thesis/statistics-out"
+statistics_out_dir="/Users/boyan/Documents/ETH-Courses/Thesis/statistics-out/$2"
 statistics="$(basename "$1")".json
 
 rm -rf "$ast_out_dir"/*

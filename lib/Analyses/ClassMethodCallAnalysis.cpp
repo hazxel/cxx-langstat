@@ -3,7 +3,6 @@
 
 #include <vector>
 #include <map>
-#include <unordered_set>
 #include <string>
 #include <cstring>
 #include <iostream>
@@ -172,7 +171,6 @@ static bool inline isDependentHeader(const std::string& header) {
 
 void ClassMethodCallAnalysis::funcPrevalence(const ordered_json& in, ordered_json& res){
     std::map<std::string, unsigned> m;
-    std::unordered_set<std::string> s;
     for (auto& [func_name, func_list] : in.items()) {
         for (auto& func : func_list) {
             if (isDependentHeader(func[feature_file_name_key_].get<string>())
@@ -187,7 +185,6 @@ void ClassMethodCallAnalysis::funcPrevalence(const ordered_json& in, ordered_jso
 
 void ClassMethodCallAnalysis::methodPrevalence(const ordered_json& in, ordered_json& res){
     std::map<std::string, std::map<std::string, unsigned>> m;
-    std::unordered_set<std::string> s;
     for (auto& [type_name, func_list] : in.items()) {
         for (auto& func : func_list) {
             if (isDependentHeader(func[feature_file_name_key_].get<string>())
@@ -202,7 +199,6 @@ void ClassMethodCallAnalysis::methodPrevalence(const ordered_json& in, ordered_j
 
 void ClassMethodCallAnalysis::constructorPrevalence(const ordered_json& in, ordered_json& res){
     std::map<std::string, int> m;
-    std::unordered_set<std::string> s;
     for (auto& [type_name, call_list] : in.items()) {
         for (auto& call : call_list) {
             if (isDependentHeader(call[feature_file_name_key_].get<string>())

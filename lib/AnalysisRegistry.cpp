@@ -15,6 +15,7 @@
 #include "cxx-langstat/Analyses/LoopDepthAnalysis.h"
 #include "cxx-langstat/Analyses/LoopKindAnalysis.h"
 #include "cxx-langstat/Analyses/MoveSemanticsAnalysis.h"
+#include "cxx-langstat/Analyses/OMPExecutableDirectiveAnalysis.h"
 #include "cxx-langstat/Analyses/TemplateInstantiationAnalysis.h"
 #include "cxx-langstat/Analyses/TemplateParameterAnalysis.h"
 #include "cxx-langstat/Analyses/UsingAnalysis.h"
@@ -65,6 +66,8 @@ void AnalysisRegistry::createFreshAnalyses(){
         Analyses.emplace_back(std::make_unique<LoopKindAnalysis>());
     if(Options.EnabledAnalyses.contains("msa"))
         Analyses.emplace_back(std::make_unique<msa::MoveSemanticsAnalysis>());
+    if(Options.EnabledAnalyses.contains("ompeda"))
+        Analyses.emplace_back(std::make_unique<OMPExecutableDirectiveAnalysis>());
     if(Options.EnabledAnalyses.contains("tia"))
         Analyses.emplace_back(std::make_unique<TemplateInstantiationAnalysis>());
     if(Options.EnabledAnalyses.contains("tpa"))

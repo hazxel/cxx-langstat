@@ -2,7 +2,6 @@
 #ifndef CLASSMETHODCALLANALYSIS_H
 #define CLASSMETHODCALLANALYSIS_H
 
-#include <unordered_set>
 #include "cxx-langstat/Analysis.h"
 #include "cxx-langstat/Deduplicator.h"
 
