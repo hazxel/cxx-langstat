@@ -7,6 +7,9 @@ json_out_dir="/Users/boyan/Documents/ETH-Courses/Thesis/json-out"
 statistics_out_dir="/Users/boyan/Documents/ETH-Courses/Thesis/statistics-out/$2"
 statistics="$(basename "$1")".json
 
+mkdir -p "$ast_out_dir"
+mkdir -p "$json_out_dir"
+mkdir -p "$statistics_out_dir"
 rm -rf "$ast_out_dir"/*
 rm -rf "$json_out_dir"/*
 

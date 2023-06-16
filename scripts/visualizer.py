@@ -113,7 +113,7 @@ for filename in os.listdir(prefix + '/' + analysis):
     f.close()
 
 keys = list(project_lib_usage.keys())
-keys.sort()
+keys.sort(reverse=True)
 project_lib_usage = {k: project_lib_usage[k] for k in keys}
 # print(constructors)
 # print(methods)
