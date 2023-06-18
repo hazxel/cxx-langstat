@@ -40,6 +40,11 @@ ConcurrencySupportLibraryMethodAnalysis::ConcurrencySupportLibraryMethodAnalysis
         "boost::condition_variable_any", "boost::promise", "boost::future", "boost::shared_future",
         "boost::barrier", "boost::latch", "boost::countdown_latch", "boost::packaged_task",
         "boost::async", "boost::launch",
+        // RAJA
+        "RAJA::forall", "RAJA::forallN", "RAJA::forall_ordered", "RAJA::forallN_ordered",
+        "RAJA::forall_execpol", "RAJA::forallN_execpol", "RAJA::forall_execpol_ordered",
+        "RAJA::forallN_execpol_ordered", "RAJA::forall_execpol_collapse", "RAJA::forallN_execpol_collapse",
+        "RAJA::RangeSegment", "RAJA::RangeStrideSegment", "RAJA::ListSegment", "RAJA::TypedListSegment",
         // PPL
         "Concurrency::critical_section", "Concurrency::reader_writer_lock", "Concurrency::reader_writer_lock",
         // opencl
@@ -78,6 +83,8 @@ ConcurrencySupportLibraryMethodAnalysis::ConcurrencySupportLibraryMethodAnalysis
     "boost/thread/latch.hpp|boost/thread/countdown_latch.hpp|boost/thread/packaged_task.hpp|"
     "boost/thread/future.hpp|boost/thread/shared_future.hpp|boost/thread/async.hpp|"
     "boost/thread/launch.hpp|"
+    // RAJA
+    "RAJA/RAJA.hpp|"
     // PPL
     "ppl.h"
     // opencl
