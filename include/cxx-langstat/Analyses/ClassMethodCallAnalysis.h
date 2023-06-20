@@ -34,6 +34,7 @@ private:
     Matches<clang::CXXMemberCallExpr> methodcalls_;
     Matches<clang::VarDecl> constructorcalls_;
     Matches<clang::CallExpr> functioncalls_;
+    // Matches<clang::CallExpr> functiontemplatecalls_;
     static constexpr auto ShorthandName = "cmca";
 
 protected:

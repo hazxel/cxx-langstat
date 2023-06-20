@@ -101,14 +101,16 @@ for filename in os.listdir(prefix + '/' + analysis):
     data = json.load(f)
 
     for ompdir_name, calls in data["Summary"]["omp_directive"].items():
-        lib_usage["OpenMP"] = lib_usage.get("OpenMP", 0) + calls
-        project_lib_usage[projectname]["OpenMP"] = project_lib_usage[projectname].get("OpenMP", 0) + calls
         if "Parallel" in ompdir_name or "For" in ompdir_name:
             thread_usage["OpenMP"] = thread_usage.get("OpenMP", 0) + calls
         elif "Atomic" in ompdir_name:
             atomic_usage["OpenMP"] = atomic_usage.get("OpenMP", 0) + calls
         elif "Critical" in ompdir_name:
             lock_mutex_usage["OpenMP"] = lock_mutex_usage.get("OpenMP", 0) + calls
+        else:
+            continue
+        lib_usage["OpenMP"] = lib_usage.get("OpenMP", 0) + calls
+        project_lib_usage[projectname]["OpenMP"] = project_lib_usage[projectname].get("OpenMP", 0) + calls
 
     f.close()
 

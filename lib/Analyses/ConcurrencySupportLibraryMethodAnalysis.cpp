@@ -32,7 +32,7 @@ ConcurrencySupportLibraryMethodAnalysis::ConcurrencySupportLibraryMethodAnalysis
         // TBB
         "tbb::task_scheduler_init", "tbb::task_group", "tbb::parallel_for", "tbb::parallel_for_each",
         "tbb::parallel_invoke", "tbb::parallel_reduce", "tbb::parallel_scan", "tbb::parallel_sort",
-        "tbb::parallel_pipeline", "tbb::task",
+        "tbb::parallel_pipeline", "tbb::task", "tbb::scoped_lock", "tbb::mutex", "tbb::spin_mutex",
         // Boost
         "boost::thread", "boost::thread_group", "boost::thread_specific_ptr",
         "boost::mutex", "boost::recursive_mutex", "boost::shared_mutex", "boost::unique_lock",
@@ -74,7 +74,7 @@ ConcurrencySupportLibraryMethodAnalysis::ConcurrencySupportLibraryMethodAnalysis
     // TBB
     "tbb/task_scheduler_init.h|tbb/task_group.h|tbb/parallel_for.h|tbb/parallel_for_each.h|"
     "tbb/parallel_invoke.h|tbb/parallel_reduce.h|tbb/parallel_scan.h|tbb/parallel_sort.h|"
-    "tbb/parallel_pipeline.h|tbb/task.h|"
+    "tbb/parallel_pipeline.h|tbb/task.h|tbb/mutex.h|tbb/spin_mutex.h|"
     // Boost
     "boost/thread.hpp|boost/thread/group.hpp|boost/thread/tss.hpp|boost/thread/mutex.hpp|"
     "boost/thread/recursive_mutex.hpp|boost/thread/shared_mutex.hpp|boost/thread/lock_guard.hpp|"
@@ -84,9 +84,9 @@ ConcurrencySupportLibraryMethodAnalysis::ConcurrencySupportLibraryMethodAnalysis
     "boost/thread/future.hpp|boost/thread/shared_future.hpp|boost/thread/async.hpp|"
     "boost/thread/launch.hpp|"
     // RAJA
-    "RAJA/RAJA.hpp|"
+    "RAJA.hpp|forall.hpp|"
     // PPL
-    "ppl.h"
+    "ppl.h|"
     // opencl
     "CL/cl.h|"
     // cuda

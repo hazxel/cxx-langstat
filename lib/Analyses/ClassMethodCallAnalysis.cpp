@@ -40,8 +40,10 @@ void ClassMethodCallAnalysis::extractFeatures(){
     constructorcalls_ = getASTNodes<VarDecl>(Extractor.extract2(*Context, constructorcallmatcher), "ConstructorCall");
 
     auto functioncallmatcher = callExpr(callee(functionDecl(names_, isExpansionInFileMatching(header_regex_)))).bind("FunctionCall");
-    // auto functioncallmatcher = callExpr(isExpansionInFileMatching(header_regex_)).bind("FunctionCall");
     functioncalls_ = getASTNodes<CallExpr>(Extractor.extract2(*Context, functioncallmatcher), "FunctionCall");
+
+    // auto functiontemplatecallmatcher = callExpr(callee(functionTemplateDecl(names_))).bind("FunctionTemplateCall");
+    // functiontemplatecalls_ = getASTNodes<CallExpr>(Extractor.extract2(*Context, functiontemplatecallmatcher), "FunctionTemplateCall");
 }
 
 
