@@ -121,7 +121,7 @@ void ClassMethodCallAnalysis::gatherData(const Matches<clang::CallExpr>& matches
         if (callee == nullptr) {
             continue;
         }
-        string type = callee->getNameAsString(); 
+        string type = callee->getQualifiedNameAsString(); // including namespace
         unsigned line_num = Context->getSourceManager().getSpellingLineNumber(match.Node->getExprLoc());
         auto persumed_loc = Context->getSourceManager().getPresumedLoc(match.Node->getExprLoc());
         const char* file_name = persumed_loc.getFilename();

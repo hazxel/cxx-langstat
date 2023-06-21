@@ -10,7 +10,8 @@ ConcurrencySupportLibraryMethodAnalysis::ConcurrencySupportLibraryMethodAnalysis
         "std::atomic", // atomic operations
         "std::mutex", "std::lock_guard", "std::unique_lock", // locking
         "std::condition_variable", // condition variables
-        "std::promise", "std::future", "std::shared_future",// futures
+        "std::promise", "std::future", "std::shared_future", // futures
+        "std::for_each", // parallel algorithms
         // pthreads
         "pthread_t", "pthread_mutex_t", "pthread_cond_t", "pthread_rwlock_t",
         "pthread_create", "pthread_join", "pthread_detach", "pthread_exit", "pthread_cancel",
@@ -45,6 +46,8 @@ ConcurrencySupportLibraryMethodAnalysis::ConcurrencySupportLibraryMethodAnalysis
         "RAJA::forall_execpol", "RAJA::forallN_execpol", "RAJA::forall_execpol_ordered",
         "RAJA::forallN_execpol_ordered", "RAJA::forall_execpol_collapse", "RAJA::forallN_execpol_collapse",
         "RAJA::RangeSegment", "RAJA::RangeStrideSegment", "RAJA::ListSegment", "RAJA::TypedListSegment",
+        // Kokkos
+        "Kokkos::parallel_for", "Kokkos::parallel_reduce", "Kokkos::parallel_scan",
         // PPL
         "Concurrency::critical_section", "Concurrency::reader_writer_lock", "Concurrency::reader_writer_lock",
         // opencl
@@ -62,9 +65,9 @@ ConcurrencySupportLibraryMethodAnalysis::ConcurrencySupportLibraryMethodAnalysis
         "cl::sycl::access::target::image", "cl::sycl::access::target::image_array"
     ),
     // libc++:
-    "thread|atomic|mutex|conditional_variable|future|"
+    "thread|atomic|mutex|conditional_variable|future|algo.h|"
     // libstdc++
-    "bits/std_thread.h|std/atomic|bits/std_mutex.h|std/condition_variable|std/future|"
+    // "bits/std_thread.h|std/atomic|bits/std_mutex.h|std/condition_variable|std/future|std/parallel/algo.h|"
     // pthreads
     "pthread.h|"
     // openmp
@@ -84,7 +87,9 @@ ConcurrencySupportLibraryMethodAnalysis::ConcurrencySupportLibraryMethodAnalysis
     "boost/thread/future.hpp|boost/thread/shared_future.hpp|boost/thread/async.hpp|"
     "boost/thread/launch.hpp|"
     // RAJA
-    "RAJA.hpp|forall.hpp|"
+    "RAJA.hpp|RAJA/pattern/forall.hpp|"
+    // Kokkos
+    "Kokkos_Core.hpp|Kokkos_Parallel.hpp|"
     // PPL
     "ppl.h|"
     // opencl
