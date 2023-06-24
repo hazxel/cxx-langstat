@@ -1,15 +1,17 @@
 import os
 import json
+import random
 import matplotlib.pyplot as plt
 
 prefix = '/Users/boyan/Documents/ETH-Courses/Thesis/statistics-out'    
 
 constructors = {}
 methods = {}
-functioins = {}
+functions = {}
 
 lib_usage = {}
 thread_usage = {}
+parallel_usage = {}
 lock_mutex_usage = {}
 atomic_usage = {}
 
@@ -27,6 +29,7 @@ for filename in os.listdir(prefix + '/' + analysis):
     f = open(prefix + '/' + analysis + '/' + filename, 'r')
     data = json.load(f)
 
+    # instance constructions
     for constructor_name, calls in data["Summary"]["constructor calls"].items():
         constructors[str(constructor_name)] = constructors.get(constructor_name, 0) + calls
         if "std::" in constructor_name:
@@ -35,6 +38,7 @@ for filename in os.listdir(prefix + '/' + analysis):
                 lib_usage["STL"] = lib_usage.get("STL", 0) + calls
                 project_lib_usage[projectname]["STL"] = project_lib_usage[projectname].get("STL", 0) + calls
 
+    # method call via instances
     for instance_name, calls in data["Summary"]["method calls"].items():
         sum = 0
         for method_name, call in calls.items():
@@ -68,13 +72,27 @@ for filename in os.listdir(prefix + '/' + analysis):
                 thread_usage["OpenMP"] = thread_usage.get("OpenMP", 0) + sum
             elif "lock" in instance_name:
                 lock_mutex_usage["OpenMP"] = lock_mutex_usage.get("OpenMP", 0) + sum
+        elif "tbb::" in instance_name:
+            lib_usage["TBB"] = lib_usage.get("TBB", 0) + sum
+            project_lib_usage[projectname]["TBB"] = project_lib_usage[projectname].get("TBB", 0) + sum
+            if "mutex" in instance_name:
+                lock_mutex_usage["TBB"] = lock_mutex_usage.get("TBB", 0) + sum
+            elif "task" in instance_name:
+                pass
         else:
             lib_usage["other"] = lib_usage.get("other", 0) + sum
             project_lib_usage[projectname]["other"] = project_lib_usage[projectname].get("other", 0) + sum
+            print(projectname, instance_name)
 
+    # function calls
     for function_name, calls in data["Summary"]["function calls"].items():
-        functioins[function_name] = functioins.get(function_name, 0) + calls
-        if "pthread_" in function_name:
+        functions[function_name] = functions.get(function_name, 0) + calls
+        if "std::" in function_name:
+            lib_usage["STL"] = lib_usage.get("STL", 0) + calls
+            project_lib_usage[projectname]["STL"] = project_lib_usage[projectname].get("STL", 0) + calls
+            if "for_each" in function_name:
+                parallel_usage["STL"] = parallel_usage.get("STL", 0) + calls
+        elif "pthread_" in function_name:
             lib_usage["pthread"] = lib_usage.get("pthread", 0) + calls
             project_lib_usage[projectname]["pthread"] = project_lib_usage[projectname].get("pthread", 0) + calls
             thread_usage["pthread"] = thread_usage.get("pthread", 0) + calls
@@ -84,9 +102,29 @@ for filename in os.listdir(prefix + '/' + analysis):
         elif "omp_" in function_name:
             lib_usage["OpenMP"] = lib_usage.get("OpenMP", 0) + calls
             project_lib_usage[projectname]["OpenMP"] = project_lib_usage[projectname].get("OpenMP", 0) + calls
+            # if "thread" in instance_name:
+            #     thread_usage["OpenMP"] = thread_usage.get("OpenMP", 0) + sum
+            if "lock" in instance_name:
+                lock_mutex_usage["OpenMP"] = lock_mutex_usage.get("OpenMP", 0) + sum
+        elif "RAJA::" in function_name:
+            lib_usage["RAJA"] = lib_usage.get("RAJA", 0) + calls
+            project_lib_usage[projectname]["RAJA"] = project_lib_usage[projectname].get("RAJA", 0) + calls
+            if "forall" in function_name:
+                parallel_usage["RAJA"] = parallel_usage.get("RAJA", 0) + calls
+        elif "Kokkos::" in function_name:
+            lib_usage["Kokkos"] = lib_usage.get("Kokkos", 0) + calls
+            project_lib_usage[projectname]["Kokkos"] = project_lib_usage[projectname].get("Kokkos", 0) + calls
+            if "parallel_" in function_name:
+                parallel_usage["Kokkos"] = parallel_usage.get("Kokkos", 0) + calls
+        elif "tbb::" in function_name:
+            lib_usage["TBB"] = lib_usage.get("TBB", 0) + calls
+            project_lib_usage[projectname]["TBB"] = project_lib_usage[projectname].get("TBB", 0) + calls
+            if "parallel_" in function_name:
+                parallel_usage["TBB"] = parallel_usage.get("TBB", 0) + calls   
         else:
             lib_usage["other"] = lib_usage.get("other", 0) + calls
             project_lib_usage[projectname]["other"] = project_lib_usage[projectname].get("other", 0) + calls
+            print(projectname, function_name)
     f.close()
 
 analysis = "ompeda"
@@ -102,7 +140,7 @@ for filename in os.listdir(prefix + '/' + analysis):
 
     for ompdir_name, calls in data["Summary"]["omp_directive"].items():
         if "Parallel" in ompdir_name or "For" in ompdir_name:
-            thread_usage["OpenMP"] = thread_usage.get("OpenMP", 0) + calls
+            parallel_usage["OpenMP"] = parallel_usage.get("OpenMP", 0) + calls
         elif "Atomic" in ompdir_name:
             atomic_usage["OpenMP"] = atomic_usage.get("OpenMP", 0) + calls
         elif "Critical" in ompdir_name:
@@ -119,12 +157,14 @@ keys.sort(reverse=True)
 project_lib_usage = {k: project_lib_usage[k] for k in keys}
 # print(constructors)
 # print(methods)
-# print(functioins)
+# print(functions)
 # print(lib_usage)
 # print(thread_usage)
 # print(lock_mutex_usage)
 # print(project_lib_usage)
 
+
+colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']
 
 plt.figure(figsize = (10, 5))
 plt.barh(list(lib_usage.keys()), list(lib_usage.values()), height=0.4, align='center', color='maroon')
@@ -150,6 +190,14 @@ plt.ylabel("libraries")
 # plt.show()
 plt.savefig(prefix + '/lock_mutex.png')
 
+plt.figure(figsize = (10, 5))
+plt.barh(list(parallel_usage.keys()), list(parallel_usage.values()), height=0.4, align='center', color='maroon')
+plt.title("parallel execution usage")
+plt.xlabel("total calls")
+plt.ylabel("libraries")
+# plt.show()
+plt.savefig(prefix + '/parallel.png')
+
 plt.figure(figsize = (12, 5))
 set_of_libs = set()
 for lib_usage in project_lib_usage.values():
@@ -158,7 +206,8 @@ for lib_usage in project_lib_usage.values():
 base=[0] * len(project_lib_usage)
 for lib in set_of_libs:
     cur_bar = [lib_usage.get(lib, 0) for lib_usage in project_lib_usage.values()]
-    plt.barh(list(project_lib_usage.keys()), cur_bar, height=0.4, align='center', left=base)
+    random.shuffle(colors)
+    plt.barh(list(project_lib_usage.keys()), cur_bar, height=0.4, align='center', left=base, color = colors.pop())
     base = [base[i] + cur_bar[i] for i in range(len(base))] 
 plt.title("concurrency support libraries usage of HPC projects")
 plt.xlabel("total number of calls")

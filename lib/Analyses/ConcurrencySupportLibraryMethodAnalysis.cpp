@@ -11,7 +11,7 @@ ConcurrencySupportLibraryMethodAnalysis::ConcurrencySupportLibraryMethodAnalysis
         "std::mutex", "std::lock_guard", "std::unique_lock", // locking
         "std::condition_variable", // condition variables
         "std::promise", "std::future", "std::shared_future", // futures
-        "std::for_each", // parallel algorithms
+        "std::for_each", "std::reduce", "std::accumulate", "std::execution", // parallel algorithms
         // pthreads
         "pthread_t", "pthread_mutex_t", "pthread_cond_t", "pthread_rwlock_t",
         "pthread_create", "pthread_join", "pthread_detach", "pthread_exit", "pthread_cancel",
@@ -65,7 +65,7 @@ ConcurrencySupportLibraryMethodAnalysis::ConcurrencySupportLibraryMethodAnalysis
         "cl::sycl::access::target::image", "cl::sycl::access::target::image_array"
     ),
     // libc++:
-    "thread|atomic|mutex|conditional_variable|future|algo.h|"
+    "thread|atomic|mutex|conditional_variable|future|algo.h|numeric|"
     // libstdc++
     // "bits/std_thread.h|std/atomic|bits/std_mutex.h|std/condition_variable|std/future|std/parallel/algo.h|"
     // pthreads
