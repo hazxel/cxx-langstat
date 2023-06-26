@@ -15,6 +15,16 @@ parallel_usage = {}
 lock_mutex_usage = {}
 atomic_usage = {}
 
+std_lib_usage = {}
+boost_lib_usage = {}    
+openmp_lib_usage = {}
+tbb_lib_usage = {}
+pthread_lib_usage = {}
+mpi_lib_usage = {}
+kokkos_lib_usage = {}
+raja_lib_usage = {}
+cuda_lib_usage = {}
+
 project_lib_usage = {}
 
 analysis = "cslma"
@@ -37,6 +47,7 @@ for filename in os.listdir(prefix + '/' + analysis):
                 lock_mutex_usage["STL"] = lock_mutex_usage.get("STL", 0) + calls
                 lib_usage["STL"] = lib_usage.get("STL", 0) + calls
                 project_lib_usage[projectname]["STL"] = project_lib_usage[projectname].get("STL", 0) + calls
+                std_lib_usage["mutex&lock"] = std_lib_usage.get("mutex&lock", 0) + calls
 
     # method call via instances
     for instance_name, calls in data["Summary"]["method calls"].items():
@@ -52,31 +63,40 @@ for filename in os.listdir(prefix + '/' + analysis):
             project_lib_usage[projectname]["STL"] = project_lib_usage[projectname].get("STL", 0) + sum
             if "thread" in instance_name:
                 thread_usage["STL"] = thread_usage.get("STL", 0) + sum
+                std_lib_usage["thread"] = std_lib_usage.get("thread", 0) + sum
             elif "mutex" in instance_name or "lock" in instance_name:
                 lock_mutex_usage["STL"] = lock_mutex_usage.get("STL", 0) + sum
+                std_lib_usage["mutex&lock"] = std_lib_usage.get("mutex&lock", 0) + sum
             elif "atomic" in instance_name:
                 atomic_usage["STL"] = atomic_usage.get("STL", 0) + sum
+                std_lib_usage["atomic"] = std_lib_usage.get("atomic", 0) + sum
         elif "boost::" in instance_name:
             lib_usage["Boost"] = lib_usage.get("Boost", 0) + sum
             project_lib_usage[projectname]["Boost"] = project_lib_usage[projectname].get("Boost", 0) + sum
             if "thread" in instance_name:
                 thread_usage["Boost"] = thread_usage.get("Boost", 0) + sum
+                boost_lib_usage["thread"] = boost_lib_usage.get("thread", 0) + sum
             elif "mutex" in instance_name or "lock" in instance_name:
                 lock_mutex_usage["Boost"] = lock_mutex_usage.get("Boost", 0) + sum
+                boost_lib_usage["mutex&lock"] = boost_lib_usage.get("mutex&lock", 0) + sum
             elif "atomic" in instance_name:
                 atomic_usage["Boost"] = atomic_usage.get("Boost", 0) + sum
+                boost_lib_usage["atomic"] = boost_lib_usage.get("atomic", 0) + sum
         elif "omp_" in instance_name:
             lib_usage["OpenMP"] = lib_usage.get("OpenMP", 0) + sum
             project_lib_usage[projectname]["OpenMP"] = project_lib_usage[projectname].get("OpenMP", 0) + sum
             if "thread" in instance_name:
                 thread_usage["OpenMP"] = thread_usage.get("OpenMP", 0) + sum
+                openmp_lib_usage["thread"] = openmp_lib_usage.get("thread", 0) + sum
             elif "lock" in instance_name:
                 lock_mutex_usage["OpenMP"] = lock_mutex_usage.get("OpenMP", 0) + sum
+                openmp_lib_usage["mutex&lock"] = openmp_lib_usage.get("mutex&lock", 0) + sum
         elif "tbb::" in instance_name:
             lib_usage["TBB"] = lib_usage.get("TBB", 0) + sum
             project_lib_usage[projectname]["TBB"] = project_lib_usage[projectname].get("TBB", 0) + sum
             if "mutex" in instance_name:
                 lock_mutex_usage["TBB"] = lock_mutex_usage.get("TBB", 0) + sum
+                tbb_lib_usage["mutex&lock"] = tbb_lib_usage.get("mutex&lock", 0) + sum
             elif "task" in instance_name:
                 pass
         else:
@@ -92,10 +112,16 @@ for filename in os.listdir(prefix + '/' + analysis):
             project_lib_usage[projectname]["STL"] = project_lib_usage[projectname].get("STL", 0) + calls
             if "for_each" in function_name:
                 parallel_usage["STL"] = parallel_usage.get("STL", 0) + calls
+                std_lib_usage["parallel_algorithm"] = std_lib_usage.get("parallel_algorithm", 0) + calls
         elif "pthread_" in function_name:
             lib_usage["pthread"] = lib_usage.get("pthread", 0) + calls
             project_lib_usage[projectname]["pthread"] = project_lib_usage[projectname].get("pthread", 0) + calls
-            thread_usage["pthread"] = thread_usage.get("pthread", 0) + calls
+            if "mutex" in function_name:
+                lock_mutex_usage["pthread"] = lock_mutex_usage.get("pthread", 0) + calls
+                pthread_lib_usage["mutex&lock"] = pthread_lib_usage.get("mutex&lock", 0) + calls
+            else:
+                thread_usage["pthread"] = thread_usage.get("pthread", 0) + calls
+                pthread_lib_usage["thread"] = pthread_lib_usage.get("thread", 0) + calls
         elif "MPI_" in function_name:
             lib_usage["MPI"] = lib_usage.get("MPI", 0) + calls
             project_lib_usage[projectname]["MPI"] = project_lib_usage[projectname].get("MPI", 0) + calls
@@ -106,21 +132,43 @@ for filename in os.listdir(prefix + '/' + analysis):
             #     thread_usage["OpenMP"] = thread_usage.get("OpenMP", 0) + sum
             if "lock" in instance_name:
                 lock_mutex_usage["OpenMP"] = lock_mutex_usage.get("OpenMP", 0) + sum
+                openmp_lib_usage["mutex&lock"] = openmp_lib_usage.get("mutex&lock", 0) + sum
         elif "RAJA::" in function_name:
             lib_usage["RAJA"] = lib_usage.get("RAJA", 0) + calls
             project_lib_usage[projectname]["RAJA"] = project_lib_usage[projectname].get("RAJA", 0) + calls
             if "forall" in function_name:
                 parallel_usage["RAJA"] = parallel_usage.get("RAJA", 0) + calls
+                raja_lib_usage["parallel_algorithm"] = raja_lib_usage.get("parallel_algorithm", 0) + calls
+            elif "atomic" in function_name:
+                atomic_usage["RAJA"] = atomic_usage.get("RAJA", 0) + calls
+                raja_lib_usage["atomic"] = raja_lib_usage.get("atomic", 0) + calls
+            elif "mutex" in function_name:
+                lock_mutex_usage["RAJA"] = lock_mutex_usage.get("RAJA", 0) + calls
+                raja_lib_usage["mutex&lock"] = raja_lib_usage.get("mutex&lock", 0) + calls
+            else:
+                raja_lib_usage["other"] = raja_lib_usage.get("other", 0) + calls
         elif "Kokkos::" in function_name:
             lib_usage["Kokkos"] = lib_usage.get("Kokkos", 0) + calls
             project_lib_usage[projectname]["Kokkos"] = project_lib_usage[projectname].get("Kokkos", 0) + calls
             if "parallel_" in function_name:
                 parallel_usage["Kokkos"] = parallel_usage.get("Kokkos", 0) + calls
+                kokkos_lib_usage["parallel_algorithm"] = kokkos_lib_usage.get("parallel_algorithm", 0) + calls
+            elif "atomic" in function_name:
+                atomic_usage["Kokkos"] = atomic_usage.get("Kokkos", 0) + calls
+                kokkos_lib_usage["atomic"] = kokkos_lib_usage.get("atomic", 0) + calls
+            elif "lock" in function_name:
+                lock_mutex_usage["Kokkos"] = lock_mutex_usage.get("Kokkos", 0) + calls
+                kokkos_lib_usage["mutex&lock"] = kokkos_lib_usage.get("mutex&lock", 0) + calls
+            else:
+                kokkos_lib_usage[function_name] = kokkos_lib_usage.get(function_name, 0) + calls
         elif "tbb::" in function_name:
             lib_usage["TBB"] = lib_usage.get("TBB", 0) + calls
             project_lib_usage[projectname]["TBB"] = project_lib_usage[projectname].get("TBB", 0) + calls
             if "parallel_" in function_name:
-                parallel_usage["TBB"] = parallel_usage.get("TBB", 0) + calls   
+                parallel_usage["TBB"] = parallel_usage.get("TBB", 0) + calls
+                tbb_lib_usage["parallel_algorithm"] = tbb_lib_usage.get("parallel_algorithm", 0) + calls
+            else:
+                tbb_lib_usage[function_name] = tbb_lib_usage.get(function_name, 0) + calls
         else:
             lib_usage["other"] = lib_usage.get("other", 0) + calls
             project_lib_usage[projectname]["other"] = project_lib_usage[projectname].get("other", 0) + calls
@@ -141,10 +189,13 @@ for filename in os.listdir(prefix + '/' + analysis):
     for ompdir_name, calls in data["Summary"]["omp_directive"].items():
         if "Parallel" in ompdir_name or "For" in ompdir_name:
             parallel_usage["OpenMP"] = parallel_usage.get("OpenMP", 0) + calls
+            openmp_lib_usage["parallel_algorithm"] = openmp_lib_usage.get("parallel_algorithm", 0) + calls
         elif "Atomic" in ompdir_name:
             atomic_usage["OpenMP"] = atomic_usage.get("OpenMP", 0) + calls
+            openmp_lib_usage["atomic"] = openmp_lib_usage.get("atomic", 0) + calls
         elif "Critical" in ompdir_name:
             lock_mutex_usage["OpenMP"] = lock_mutex_usage.get("OpenMP", 0) + calls
+            openmp_lib_usage["mutex&lock"] = openmp_lib_usage.get("mutex&lock", 0) + calls
         else:
             continue
         lib_usage["OpenMP"] = lib_usage.get("OpenMP", 0) + calls
@@ -166,6 +217,8 @@ project_lib_usage = {k: project_lib_usage[k] for k in keys}
 
 colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']
 
+
+# statistics for each concurrency feature
 plt.figure(figsize = (10, 5))
 plt.barh(list(lib_usage.keys()), list(lib_usage.values()), height=0.4, align='center', color='maroon')
 plt.title("lib usage")
@@ -198,6 +251,74 @@ plt.ylabel("libraries")
 # plt.show()
 plt.savefig(prefix + '/parallel.png')
 
+plt.figure(figsize = (10, 5))
+plt.barh(list(atomic_usage.keys()), list(atomic_usage.values()), height=0.4, align='center', color='maroon')
+plt.title("atomic usage")
+plt.xlabel("total calls")
+plt.ylabel("libraries")
+# plt.show()
+plt.savefig(prefix + '/atomic.png')
+
+
+# statistics for each framework/library
+plt.figure(figsize = (10, 5))
+plt.barh(list(std_lib_usage.keys()), list(std_lib_usage.values()), height=0.4, align='center', color='maroon')
+plt.title("std lib usage")
+plt.xlabel("total calls")
+plt.ylabel("usage")
+# plt.show()
+plt.savefig(prefix + '/std_lib.png')
+
+plt.figure(figsize = (10, 5))
+plt.barh(list(tbb_lib_usage.keys()), list(tbb_lib_usage.values()), height=0.4, align='center', color='maroon')
+plt.title("tbb lib usage")
+plt.xlabel("total calls")
+plt.ylabel("usage")
+# plt.show()
+plt.savefig(prefix + '/tbb_lib.png')
+
+plt.figure(figsize = (10, 5))
+plt.barh(list(openmp_lib_usage.keys()), list(openmp_lib_usage.values()), height=0.4, align='center', color='maroon')
+plt.title("omp lib usage")
+plt.xlabel("total calls")
+plt.ylabel("usage")
+# plt.show()
+plt.savefig(prefix + '/omp_lib.png')
+
+plt.figure(figsize = (10, 5))
+plt.barh(list(pthread_lib_usage.keys()), list(pthread_lib_usage.values()), height=0.4, align='center', color='maroon')
+plt.title("pthread lib usage")
+plt.xlabel("total calls")
+plt.ylabel("usage")
+# plt.show()
+plt.savefig(prefix + '/pthread_lib.png')
+
+plt.figure(figsize = (10, 5))
+plt.barh(list(mpi_lib_usage.keys()), list(mpi_lib_usage.values()), height=0.4, align='center', color='maroon')
+plt.title("mpi lib usage")
+plt.xlabel("total calls")
+plt.ylabel("usage")
+# plt.show()
+plt.savefig(prefix + '/mpi_lib.png')
+
+plt.figure(figsize = (10, 5))
+plt.barh(list(kokkos_lib_usage.keys()), list(kokkos_lib_usage.values()), height=0.4, align='center', color='maroon')
+plt.title("kokkos lib usage")
+plt.xlabel("total calls")
+plt.ylabel("usage")
+# plt.show()
+plt.savefig(prefix + '/kokkos_lib.png')
+
+plt.figure(figsize = (10, 5))
+plt.barh(list(raja_lib_usage.keys()), list(raja_lib_usage.values()), height=0.4, align='center', color='maroon')
+plt.title("raja lib usage")
+plt.xlabel("total calls")
+plt.ylabel("usage")
+# plt.show()
+plt.savefig(prefix + '/raja_lib.png')
+
+
+# statistics for all the projects
 plt.figure(figsize = (12, 5))
 set_of_libs = set()
 for lib_usage in project_lib_usage.values():
