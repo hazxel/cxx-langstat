@@ -15,6 +15,8 @@ ConcurrencySupportLibraryMethodAnalysis::ConcurrencySupportLibraryMethodAnalysis
         // pthreads
         "pthread_t", "pthread_mutex_t", "pthread_cond_t", "pthread_rwlock_t",
         "pthread_create", "pthread_join", "pthread_detach", "pthread_exit", "pthread_cancel",
+        "pthread_mutex_init", "pthread_mutex_destroy", "pthread_mutex_lock", "pthread_mutex_trylock",
+        "pthread_mutex_unlock", "pthread_mutex_timedlock", "pthread_mutex_consistent",
         // openmp
         "omp_lock_t", "omp_nest_lock_t", "omp_sched_t", "omp_sched_t", "omp_proc_bind_t",
         "omp_init_lock", "omp_init_nest_lock", "omp_destroy_lock", "omp_destroy_nest_lock",
