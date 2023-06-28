@@ -30,13 +30,19 @@ ContainerLibAnalysis::ContainerLibAnalysis() : TemplateInstantiationAnalysis(
         "std::unordered_set", "std::unordered_map",
         "std::unordered_multiset", "std::unordered_multimap",
         "std::stack", "std::queue", "std::priority_queue"
+        // TBB
+        "tbb::concurrent_vector", "tbb::concurrent_unordered_map", "tbb::concurrent_unordered_set", "tbb::concurrent_queue",
+        // PPL
+        "concurrency::concurrent_vector", "concurrency::concurrent_queue", "concurrency::concurrent_stack",
+        "concurrency::concurrent_unordered_map", "concurrency::concurrent_unordered_multimap"
     ),
     // libc++
-    "array|vector|deque|forward_list|list|set|map|unordered_set|unordered_map|"
-    "stack|queue"){
-    // no libstdc++ header necessary?
-    std::cout << "CLA ctor\n";
-}
+    "vector|list|forward_list|array|map|set|unordered_map|unordered_set|queue|deque|priority_queue|stack|"
+    // tbb
+    "concurrent_vector|concurrent_unordered_map|concurrent_unordered_set|concurrent_queue|"
+    // ppl
+    "concurrent_vector|concurrent_queue|concurrent_stack|concurrent_unordered_map|concurrent_unordered_multimap"
+){}
 
 namespace {
 

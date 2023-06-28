@@ -38,7 +38,6 @@ ConcurrencySupportLibraryMethodAnalysis::ConcurrencySupportLibraryMethodAnalysis
         "tbb::task_scheduler_init", "tbb::task_group", "tbb::parallel_for", "tbb::parallel_for_each",
         "tbb::parallel_invoke", "tbb::parallel_reduce", "tbb::parallel_scan", "tbb::parallel_sort",
         "tbb::parallel_pipeline", "tbb::task", "tbb::scoped_lock", "tbb::mutex", "tbb::spin_mutex",
-        "tbb::concurrent_vector", "tbb::concurrent_unordered_map", "tbb::concurrent_unordered_set", "tbb::concurrent_queue",
         // Boost
         "boost::thread", "boost::thread_group", "boost::thread_specific_ptr",
         "boost::mutex", "boost::recursive_mutex", "boost::shared_mutex", "boost::unique_lock",
@@ -58,8 +57,6 @@ ConcurrencySupportLibraryMethodAnalysis::ConcurrencySupportLibraryMethodAnalysis
         "concurrency::critical_section", "concurrency::reader_writer_lock", "concurrency::reader_writer_lock",
         "concurrency::parallel_for", "concurrency::parallel_for_each", "concurrency::parallel_invoke",
         "concurrency::parallel_reduce", "concurrency::parallel_scan", "concurrency::parallel_sort",
-        "concurrency::concurrent_vector", "concurrency::concurrent_queue", "concurrency::concurrent_stack",
-        "concurrency::concurrent_unordered_map", "concurrency::concurrent_unordered_multimap",
         // opencl
         "clCreateCommandQueue", "clCreateContext", "clCreateProgramWithSource", "clCreateKernel",
         // cuda
@@ -75,7 +72,7 @@ ConcurrencySupportLibraryMethodAnalysis::ConcurrencySupportLibraryMethodAnalysis
         "cl::sycl::access::target::image", "cl::sycl::access::target::image_array"
     ),
     // libc++:
-    "thread|atomic|mutex|conditional_variable|future|algo.h|numeric|vector|list|array|map|set|unordered_map|unordered_set|queue|deque|priority_queue|stack|"
+    "thread|atomic|mutex|conditional_variable|future|algo.h|numeric|"
     // libstdc++
     // "bits/std_thread.h|std/atomic|bits/std_mutex.h|std/condition_variable|std/future|std/parallel/algo.h|"
     // pthreads
@@ -88,7 +85,6 @@ ConcurrencySupportLibraryMethodAnalysis::ConcurrencySupportLibraryMethodAnalysis
     "tbb/task_scheduler_init.h|tbb/task_group.h|tbb/parallel_for.h|tbb/parallel_for_each.h|"
     "tbb/parallel_invoke.h|tbb/parallel_reduce.h|tbb/parallel_scan.h|tbb/parallel_sort.h|"
     "tbb/parallel_pipeline.h|tbb/task.h|tbb/mutex.h|tbb/spin_mutex.h|"
-    "tbb/concurrent_vector.h|tbb/concurrent_unordered_map.h|tbb/concurrent_unordered_set.h|tbb/concurrent_queue.h|"
     // Boost
     "boost/thread.hpp|boost/thread/group.hpp|boost/thread/tss.hpp|boost/thread/mutex.hpp|"
     "boost/thread/recursive_mutex.hpp|boost/thread/shared_mutex.hpp|boost/thread/lock_guard.hpp|"
@@ -103,7 +99,7 @@ ConcurrencySupportLibraryMethodAnalysis::ConcurrencySupportLibraryMethodAnalysis
     // Kokkos
     "Kokkos_Core.hpp|Kokkos_Parallel.hpp|"
     // PPL
-    "ppl.h|concurrent_vector.h|concurrent_queue.h|concurrent_stack.h|concurrent_unordered_map.h|"
+    "ppl.h|"
     // opencl
     "CL/cl.h|"
     // cuda
