@@ -13,7 +13,6 @@ ConcurrencySupportLibraryMethodAnalysis::ConcurrencySupportLibraryMethodAnalysis
         "std::promise", "std::future", "std::shared_future", // futures
         "std::for_each", "std::reduce", "std::accumulate", "std::execution", // parallel algorithms
         "std::latch", "std::barrier", // synchronization
-        "std::vector", "std::array", "std::list", "std::map", "std::unordered_map", "std::set", "std::unordered_set", "std::queue", "std::deque", "std::priority_queue", "std::stack", // containers
         // pthreads
         "pthread_t", "pthread_mutex_t", "pthread_cond_t", "pthread_rwlock_t",
         "pthread_create", "pthread_join", "pthread_detach", "pthread_exit", "pthread_cancel",
