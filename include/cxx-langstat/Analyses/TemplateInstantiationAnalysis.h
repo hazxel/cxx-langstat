@@ -18,9 +18,7 @@ public:
     TemplateInstantiationAnalysis(InstKind IK,
         clang::ast_matchers::internal::Matcher<clang::NamedDecl> Names,
         std::string HeaderRegex);
-    ~TemplateInstantiationAnalysis(){
-        std::cout << "TIA dtor\n";
-    }
+    ~TemplateInstantiationAnalysis(){}
     std::string getShorthand() override {
         return ShorthandName;
     }

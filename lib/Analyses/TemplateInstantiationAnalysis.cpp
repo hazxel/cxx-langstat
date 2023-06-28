@@ -50,9 +50,7 @@ TemplateInstantiationAnalysis::TemplateInstantiationAnalysis() :
 
 TemplateInstantiationAnalysis::TemplateInstantiationAnalysis(InstKind IK,
     internal::Matcher<clang::NamedDecl> Names, std::string HeaderRegex) :
-    IK(IK), Names(Names), HeaderRegex(HeaderRegex) {
-        std::cout << "TIA ctor\n";
-}
+    IK(IK), Names(Names), HeaderRegex(HeaderRegex) {}
 
 // test code for instantiations:
 // - Test code to see if able to find "subinstantiations"

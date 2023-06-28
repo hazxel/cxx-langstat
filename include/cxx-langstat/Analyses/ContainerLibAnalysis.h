@@ -8,9 +8,7 @@
 class ContainerLibAnalysis : public TemplateInstantiationAnalysis {
 public:
     ContainerLibAnalysis();
-    ~ContainerLibAnalysis(){
-        std::cout << "CLA dtor\n";
-    }
+    ~ContainerLibAnalysis(){}
     std::string getShorthand() override {
         return ShorthandName;
     }
