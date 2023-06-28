@@ -12,6 +12,8 @@ ConcurrencySupportLibraryMethodAnalysis::ConcurrencySupportLibraryMethodAnalysis
         "std::condition_variable", // condition variables
         "std::promise", "std::future", "std::shared_future", // futures
         "std::for_each", "std::reduce", "std::accumulate", "std::execution", // parallel algorithms
+        "std::latch", "std::barrier", // synchronization
+        "std::vector", "std::array", "std::list", "std::map", "std::unordered_map", "std::set", "std::unordered_set", "std::queue", "std::deque", "std::priority_queue", "std::stack", // containers
         // pthreads
         "pthread_t", "pthread_mutex_t", "pthread_cond_t", "pthread_rwlock_t",
         "pthread_create", "pthread_join", "pthread_detach", "pthread_exit", "pthread_cancel",
@@ -73,7 +75,7 @@ ConcurrencySupportLibraryMethodAnalysis::ConcurrencySupportLibraryMethodAnalysis
         "cl::sycl::access::target::image", "cl::sycl::access::target::image_array"
     ),
     // libc++:
-    "thread|atomic|mutex|conditional_variable|future|algo.h|numeric|"
+    "thread|atomic|mutex|conditional_variable|future|algo.h|numeric|vector|list|array|map|set|unordered_map|unordered_set|queue|deque|priority_queue|stack|"
     // libstdc++
     // "bits/std_thread.h|std/atomic|bits/std_mutex.h|std/condition_variable|std/future|std/parallel/algo.h|"
     // pthreads
