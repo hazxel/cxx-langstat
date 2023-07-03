@@ -10,6 +10,8 @@ methods = {}
 functions = {}
 
 lib_usage = {}
+project_lib_usage = {}
+
 thread_usage = {}
 parallel_usage = {}
 lock_mutex_usage = {}
@@ -25,7 +27,8 @@ kokkos_lib_usage = {}
 raja_lib_usage = {}
 cuda_lib_usage = {}
 
-project_lib_usage = {}
+container_usage = {}
+
 
 analysis = "cslma"
 for filename in os.listdir(prefix + '/' + analysis):
@@ -215,6 +218,22 @@ project_lib_usage = {k: project_lib_usage[k] for k in keys}
 # print(project_lib_usage)
 
 
+# container lib usage
+analysis = "cla"
+for filename in os.listdir(prefix + '/' + analysis):
+    if not filename.endswith(".json"):
+        continue
+
+    projectname= filename.split('.')[0]
+    f = open(prefix + '/' + analysis + '/' + filename, 'r')
+    data = json.load(f)
+
+    for container_name, calls in data["Summary"]["container type prevalence"].items():
+        container_usage[container_name] = container_usage.get(container_name, 0) + calls
+        
+    f.close() 
+
+
 colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']
 
 
@@ -336,3 +355,13 @@ plt.ylabel("project name")
 plt.legend(set_of_libs)
 # plt.show()
 plt.savefig(prefix + '/project_lib.png')
+
+
+# statistics for container prevalence
+plt.figure(figsize = (15, 5))
+plt.barh(list(container_usage.keys()), list(container_usage.values()), height=0.4, align='center', color='maroon')
+plt.title("container usage")
+plt.xlabel("total calls")
+plt.ylabel("container type")
+# plt.show()
+plt.savefig(prefix + '/container.png')
