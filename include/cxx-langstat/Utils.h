@@ -112,6 +112,17 @@ void templatePrevalence(const nlohmann::ordered_json& in, nlohmann::ordered_json
 
 void templateTypeArgPrevalence(const nlohmann::ordered_json& in, nlohmann::ordered_json& out, const std::map<std::string, int>& SM);
 
+bool inline isDependentHeader(const std::string& fileName){
+    return fileName.find("/usr/lib") != std::string::npos
+        || fileName.find("/usr/include") != std::string::npos
+        || fileName.find("/Library/Developer") != std::string::npos
+        || fileName.find("/Applications/Xcode.app") != std::string::npos
+        || fileName.find("/opt") != std::string::npos
+        || fileName.find("llvm") != std::string::npos
+        || fileName.find("clang") != std::string::npos
+        || fileName.find("homebrew") != std::string::npos;
+}
+
 //-----------------------------------------------------------------------------
 
 #endif // UTILS_H

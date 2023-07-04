@@ -7,7 +7,7 @@ ConcurrencySupportLibraryMethodAnalysis::ConcurrencySupportLibraryMethodAnalysis
         clang::ast_matchers::hasAnyName(
         // standard library concurrency supports
         "std::thread", "std::jthread", // threads
-        "std::atomic", // atomic operations
+        "std::atomic", "std::atomic_int", "std::atomic_uint", "std::atomic_bool", "std::atomic_char", "std::atomic_schar", "std::atomic_uchar", "std::atomic_short", "std::atomic_ushort", "std::atomic_wchar_t", "std::atomic_char16_t", "std::atomic_char32_t", "std::atomic_int8_t", "std::atomic_uint8_t", "std::atomic_int16_t", "std::atomic_uint16_t", "std::atomic_int32_t", "std::atomic_uint32_t", "std::atomic_int64_t", "std::atomic_uint64_t", "std::atomic_int_least8_t", "std::atomic_uint_least8_t", "std::atomic_int_least16_t", "std::atomic_uint_least16_t", "std::atomic_int_least32_t", "std::atomic_uint_least32_t", "std::atomic_int_least64_t", "std::atomic_uint_least64_t", "std::atomic_int_fast8_t", "std::atomic_uint_fast8_t", "std::atomic_int_fast16_t", "std::atomic_uint_fast16_t", "std::atomic_int_fast32_t", "std::atomic_uint_fast32_t", "std::atomic_int_fast64_t", "std::atomic_uint_fast64_t", "std::atomic_intptr_t", "std::atomic_uintptr_t", "std::atomic_intmax_t", "std::atomic_uintmax_t",  // atomic operations
         "std::mutex", "std::lock_guard", "std::unique_lock", // locking
         "std::condition_variable", // condition variables
         "std::promise", "std::future", "std::shared_future", // futures

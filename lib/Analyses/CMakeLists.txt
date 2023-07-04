@@ -1,5 +1,6 @@
 add_library(Analyses
     AlgorithmLibraryAnalysis.cpp
+    AtomicMemoryOrderAnalysis.cpp
     ClassInstantiationAnalysis.cpp
     ClassMethodCallAnalysis.cpp
     ConcurrencySupportLibraryAnalysis.cpp

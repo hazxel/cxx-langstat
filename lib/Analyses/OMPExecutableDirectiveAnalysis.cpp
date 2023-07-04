@@ -85,17 +85,6 @@ void OMPExecutableDirectiveAnalysis::analyzeFeatures(){
     Features[omp_directive_key_] = js;
 }
 
-static bool inline isDependentHeader(const std::string& fileName){
-    return fileName.find("/usr/lib") != std::string::npos
-        || fileName.find("/usr/include") != std::string::npos
-        || fileName.find("/Library/Developer") != std::string::npos
-        || fileName.find("/Applications/Xcode.app") != std::string::npos
-        || fileName.find("/opt") != std::string::npos
-        || fileName.find("llvm") != std::string::npos
-        || fileName.find("clang") != std::string::npos
-        || fileName.find("homebrew") != std::string::npos;
-}
-
 void OMPExecutableDirectiveAnalysis::processFeatures(nlohmann::ordered_json j){
     std::unordered_map<std::string, unsigned> ompDirectives;
     for (auto& [dirName, dirList] : j.at(omp_directive_key_).items()) {

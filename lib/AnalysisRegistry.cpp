@@ -4,6 +4,7 @@
 #include "cxx-langstat/AnalysisList.h"
 
 #include "cxx-langstat/Analyses/AlgorithmLibraryAnalysis.h"
+#include "cxx-langstat/Analyses/AtomicMemoryOrderAnalysis.h"
 #include "cxx-langstat/Analyses/ClassInstantiationAnalysis.h"
 #include "cxx-langstat/Analyses/ClassMethodCallAnalysis.h"
 #include "cxx-langstat/Analyses/ConcurrencySupportLibraryAnalysis.h"
@@ -44,6 +45,8 @@ void AnalysisRegistry::createFreshAnalyses(){
 
     if(Options.EnabledAnalyses.contains("ala"))
         Analyses.emplace_back(std::make_unique<AlgorithmLibraryAnalysis>());
+    if(Options.EnabledAnalyses.contains("amoa"))
+        Analyses.emplace_back(std::make_unique<AtomicMemoryOrderAnalysis>());
     if(Options.EnabledAnalyses.contains("cca"))
         Analyses.emplace_back(std::make_unique<CyclomaticComplexityAnalysis>());
     if(Options.EnabledAnalyses.contains("cea"))

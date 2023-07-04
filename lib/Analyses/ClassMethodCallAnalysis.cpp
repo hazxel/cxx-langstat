@@ -35,9 +35,15 @@ ClassMethodCallAnalysis::ClassMethodCallAnalysis(
 void ClassMethodCallAnalysis::extractFeatures(){
     auto methodcallmatcher = cxxMemberCallExpr(on(hasType(cxxRecordDecl(names_, isExpansionInFileMatching(header_regex_))))).bind("MethodCall");
     methodcalls_ = getASTNodes<CXXMemberCallExpr>(Extractor.extract2(*Context, methodcallmatcher), "MethodCall");
+    auto typedefmethodcallmatcher = cxxMemberCallExpr(on(hasType(typedefDecl(names_, isExpansionInFileMatching(header_regex_))))).bind("TypedefMethodCall");
+    auto typedefmethodcalls = getASTNodes<CXXMemberCallExpr>(Extractor.extract2(*Context, typedefmethodcallmatcher), "TypedefMethodCall");
+    methodcalls_.insert(methodcalls_.end(), typedefmethodcalls.begin(), typedefmethodcalls.end());
 
     auto constructorcallmatcher = varDecl(has(cxxConstructExpr()), hasType(cxxRecordDecl(names_, isExpansionInFileMatching(header_regex_)))).bind("ConstructorCall");
     constructorcalls_ = getASTNodes<VarDecl>(Extractor.extract2(*Context, constructorcallmatcher), "ConstructorCall");
+    auto typedefconstructorcallmatcher = varDecl(has(cxxConstructExpr()), hasType(typedefDecl(names_, isExpansionInFileMatching(header_regex_)))).bind("TypedefConstructorCall");
+    auto typedefconstructorcalls = getASTNodes<VarDecl>(Extractor.extract2(*Context, typedefconstructorcallmatcher), "TypedefConstructorCall");
+    constructorcalls_.insert(constructorcalls_.end(), typedefconstructorcalls.begin(), typedefconstructorcalls.end());
 
     auto functioncallmatcher = callExpr(callee(functionDecl(names_, isExpansionInFileMatching(header_regex_)))).bind("FunctionCall");
     functioncalls_ = getASTNodes<CallExpr>(Extractor.extract2(*Context, functioncallmatcher), "FunctionCall");
@@ -162,13 +168,6 @@ void ClassMethodCallAnalysis::processFeatures(nlohmann::ordered_json j){
         funcPrevalence(j.at(function_call_key_), res);
         Statistics[function_call_key_] = res;
     }
-}
-
-static bool inline isDependentHeader(const std::string& header) {
-    return header.find("/usr/lib") != string::npos 
-        || header.find("llvm") != string::npos
-        || header.find("gcc") != string::npos
-        || header.find("homebrew") != string::npos;
 }
 
 void ClassMethodCallAnalysis::funcPrevalence(const ordered_json& in, ordered_json& res){
