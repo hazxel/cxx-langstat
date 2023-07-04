@@ -10,7 +10,6 @@ methods = {}
 functions = {}
 
 lib_usage = {}
-project_lib_usage = {}
 
 thread_usage = {}
 parallel_usage = {}
@@ -26,6 +25,8 @@ mpi_lib_usage = {}
 kokkos_lib_usage = {}
 raja_lib_usage = {}
 cuda_lib_usage = {}
+
+project_lib_usage = {}
 
 container_usage = {}
 
@@ -115,7 +116,7 @@ for filename in os.listdir(prefix + '/' + analysis):
             project_lib_usage[projectname]["STL"] = project_lib_usage[projectname].get("STL", 0) + calls
             if "for_each" in function_name:
                 parallel_usage["STL"] = parallel_usage.get("STL", 0) + calls
-                std_lib_usage["parallel_algorithm"] = std_lib_usage.get("parallel_algorithm", 0) + calls
+                std_lib_usage["parallel_algo"] = std_lib_usage.get("parallel_algo", 0) + calls
         elif "pthread_" in function_name:
             lib_usage["pthread"] = lib_usage.get("pthread", 0) + calls
             project_lib_usage[projectname]["pthread"] = project_lib_usage[projectname].get("pthread", 0) + calls
@@ -141,7 +142,7 @@ for filename in os.listdir(prefix + '/' + analysis):
             project_lib_usage[projectname]["RAJA"] = project_lib_usage[projectname].get("RAJA", 0) + calls
             if "forall" in function_name:
                 parallel_usage["RAJA"] = parallel_usage.get("RAJA", 0) + calls
-                raja_lib_usage["parallel_algorithm"] = raja_lib_usage.get("parallel_algorithm", 0) + calls
+                raja_lib_usage["parallel_algo"] = raja_lib_usage.get("parallel_algo", 0) + calls
             elif "atomic" in function_name:
                 atomic_usage["RAJA"] = atomic_usage.get("RAJA", 0) + calls
                 raja_lib_usage["atomic"] = raja_lib_usage.get("atomic", 0) + calls
@@ -155,7 +156,7 @@ for filename in os.listdir(prefix + '/' + analysis):
             project_lib_usage[projectname]["Kokkos"] = project_lib_usage[projectname].get("Kokkos", 0) + calls
             if "parallel_" in function_name:
                 parallel_usage["Kokkos"] = parallel_usage.get("Kokkos", 0) + calls
-                kokkos_lib_usage["parallel_algorithm"] = kokkos_lib_usage.get("parallel_algorithm", 0) + calls
+                kokkos_lib_usage["parallel_algo"] = kokkos_lib_usage.get("parallel_algo", 0) + calls
             elif "atomic" in function_name:
                 atomic_usage["Kokkos"] = atomic_usage.get("Kokkos", 0) + calls
                 kokkos_lib_usage["atomic"] = kokkos_lib_usage.get("atomic", 0) + calls
@@ -169,7 +170,7 @@ for filename in os.listdir(prefix + '/' + analysis):
             project_lib_usage[projectname]["TBB"] = project_lib_usage[projectname].get("TBB", 0) + calls
             if "parallel_" in function_name:
                 parallel_usage["TBB"] = parallel_usage.get("TBB", 0) + calls
-                tbb_lib_usage["parallel_algorithm"] = tbb_lib_usage.get("parallel_algorithm", 0) + calls
+                tbb_lib_usage["parallel_algo"] = tbb_lib_usage.get("parallel_algo", 0) + calls
             else:
                 tbb_lib_usage[function_name] = tbb_lib_usage.get(function_name, 0) + calls
         else:
@@ -192,7 +193,7 @@ for filename in os.listdir(prefix + '/' + analysis):
     for ompdir_name, calls in data["Summary"]["omp_directive"].items():
         if "Parallel" in ompdir_name or "For" in ompdir_name:
             parallel_usage["OpenMP"] = parallel_usage.get("OpenMP", 0) + calls
-            openmp_lib_usage["parallel_algorithm"] = openmp_lib_usage.get("parallel_algorithm", 0) + calls
+            openmp_lib_usage["parallel_algo"] = openmp_lib_usage.get("parallel_algo", 0) + calls
         elif "Atomic" in ompdir_name:
             atomic_usage["OpenMP"] = atomic_usage.get("OpenMP", 0) + calls
             openmp_lib_usage["atomic"] = openmp_lib_usage.get("atomic", 0) + calls
@@ -282,7 +283,7 @@ plt.savefig(prefix + '/atomic.png')
 # statistics for each framework/library
 plt.figure(figsize = (10, 5))
 plt.barh(list(std_lib_usage.keys()), list(std_lib_usage.values()), height=0.4, align='center', color='maroon')
-plt.title("std lib usage")
+plt.title("STL usage")
 plt.xlabel("total calls")
 plt.ylabel("usage")
 # plt.show()
@@ -290,7 +291,7 @@ plt.savefig(prefix + '/std_lib.png')
 
 plt.figure(figsize = (10, 5))
 plt.barh(list(tbb_lib_usage.keys()), list(tbb_lib_usage.values()), height=0.4, align='center', color='maroon')
-plt.title("tbb lib usage")
+plt.title("TBB lib usage")
 plt.xlabel("total calls")
 plt.ylabel("usage")
 # plt.show()
@@ -298,7 +299,7 @@ plt.savefig(prefix + '/tbb_lib.png')
 
 plt.figure(figsize = (10, 5))
 plt.barh(list(openmp_lib_usage.keys()), list(openmp_lib_usage.values()), height=0.4, align='center', color='maroon')
-plt.title("omp lib usage")
+plt.title("OpenMP lib usage")
 plt.xlabel("total calls")
 plt.ylabel("usage")
 # plt.show()
@@ -314,7 +315,7 @@ plt.savefig(prefix + '/pthread_lib.png')
 
 plt.figure(figsize = (10, 5))
 plt.barh(list(mpi_lib_usage.keys()), list(mpi_lib_usage.values()), height=0.4, align='center', color='maroon')
-plt.title("mpi lib usage")
+plt.title("MPI lib usage")
 plt.xlabel("total calls")
 plt.ylabel("usage")
 # plt.show()
@@ -330,7 +331,7 @@ plt.savefig(prefix + '/kokkos_lib.png')
 
 plt.figure(figsize = (10, 5))
 plt.barh(list(raja_lib_usage.keys()), list(raja_lib_usage.values()), height=0.4, align='center', color='maroon')
-plt.title("raja lib usage")
+plt.title("RAJA lib usage")
 plt.xlabel("total calls")
 plt.ylabel("usage")
 # plt.show()
