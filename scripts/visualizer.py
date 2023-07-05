@@ -15,6 +15,7 @@ thread_usage = {}
 parallel_usage = {}
 lock_mutex_usage = {}
 atomic_usage = {}
+atomic_memroy_order = {}
 
 std_lib_usage = {}
 boost_lib_usage = {}    
@@ -36,7 +37,7 @@ for filename in os.listdir(prefix + '/' + analysis):
     if not filename.endswith(".json"):
         continue
 
-    projectname= filename.split('.')[0]
+    projectname = filename.split('.')[0]
     print("Processing " + projectname + " with " + analysis + "...")
     project_lib_usage[projectname] = project_lib_usage.get(projectname, {})
 
@@ -184,7 +185,7 @@ for filename in os.listdir(prefix + '/' + analysis):
     if not filename.endswith(".json"):
         continue
 
-    projectname= filename.split('.')[0]
+    projectname = filename.split('.')[0]
     project_lib_usage[projectname] = project_lib_usage.get(projectname, {})
 
     f = open(prefix + '/' + analysis + '/' + filename, 'r')
@@ -210,13 +211,29 @@ for filename in os.listdir(prefix + '/' + analysis):
 keys = list(project_lib_usage.keys())
 keys.sort(reverse=True)
 project_lib_usage = {k: project_lib_usage[k] for k in keys}
-# print(constructors)
-# print(methods)
-# print(functions)
-# print(lib_usage)
-# print(thread_usage)
-# print(lock_mutex_usage)
-# print(project_lib_usage)
+
+analysis = "amoa"
+for filename in os.listdir(prefix + '/' + analysis):
+    if not filename.endswith(".json"):
+        continue
+
+    projectname = filename.split('.')[0]
+    project_lib_usage[projectname] = project_lib_usage.get(projectname, {})
+
+    f = open(prefix + '/' + analysis + '/' + filename, 'r')
+    data = json.load(f)
+
+    for memory_order, calls in data["Summary"]["memory_model"].items():
+        if memory_order.startswith("std::memory_order_"):
+            memory_order = memory_order[len("std::memory_order_"):]
+            if memory_order.find("std::memory_order_") != -1:
+                mo1 = memory_order[0:memory_order.find("std::memory_order_")]
+                atomic_memroy_order[mo1] = atomic_memroy_order.get(mo1, 0) + calls
+                memory_order = memory_order[memory_order.find("std::memory_order_") + len("std::memory_order_"):]
+        atomic_memroy_order[memory_order] = atomic_memroy_order.get(memory_order, 0) + calls
+keys = list(atomic_memroy_order.keys())
+keys.sort(reverse=True)
+atomic_memroy_order = {k: atomic_memroy_order[k] for k in keys}
 
 
 # container lib usage
@@ -366,3 +383,13 @@ plt.xlabel("total calls")
 plt.ylabel("container type")
 # plt.show()
 plt.savefig(prefix + '/container.png')
+
+
+# statistics for atomic memory order
+plt.figure(figsize = (10, 5))
+plt.barh(list(atomic_memroy_order.keys()), list(atomic_memroy_order.values()), height=0.4, align='center', color='maroon')
+plt.title("atomic memory order")
+plt.xlabel("total usage")
+plt.ylabel("memory order")
+# plt.show()
+plt.savefig(prefix + '/atomic_memory_order.png')

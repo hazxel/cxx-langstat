@@ -32,38 +32,34 @@ void AtomicMemoryOrderAnalysis::analyzeFeatures(){
     for (auto match : atomic_calls_) {
         string called_func = match.Node->getMethodDecl()->getQualifiedNameAsString();
         string memory_model = "";
-        bool is_default = true;
+        bool has_memory_order_arg = false;
 
         unsigned num_args = match.Node->getNumArgs();
-        if (num_args == 0) {
+
+        std::string printedStmt;
+        llvm::raw_string_ostream stream(printedStmt);
+
+        for (int i = 0; i < num_args; i++) {
+            auto model = match.Node->getArg(i)->getExprStmt();
+            if (model->getType().getAsString().find("memory_order") != std::string::npos) {
+                has_memory_order_arg = true;
+                model->printPretty(stream, nullptr, PrintingPolicy(LangOptions()));
+            } else {
+                continue;
+            }
+        }
+
+        if (!has_memory_order_arg) {
+            continue;
+        }
+
+        string expr = stream.str();
+        if (expr.length() == 0) {
             memory_model = "std::memory_order_seq_cst";
         } else {
-            std::string printedStmt;
-            llvm::raw_string_ostream stream(printedStmt);
-
-            for (int i = 0; i < num_args; i++) {
-                auto model = match.Node->getArg(i)->getExprStmt();
-                if (model->getType().getAsString().find("memory_order") != std::string::npos) {
-                    model->printPretty(stream, nullptr, PrintingPolicy(LangOptions()));
-                    string expr = stream.str();
-
-                    if (expr.length() == 0) {
-                        memory_model = "std::memory_order_seq_cst";
-                        break;
-                    } else {
-                        memory_model = expr;
-                        is_default = false;
-                    }
-                    
-                } else {
-                    continue;
-                }
-            }
-
-            if (memory_model.length() == 0) {
-                memory_model = "std::memory_order_seq_cst";
-            }            
-        }
+            memory_model = expr;
+        }        
+        
 
         unsigned line_num = Context->getSourceManager().getSpellingLineNumber(match.Node->getExprLoc());
         auto persumed_loc = Context->getSourceManager().getPresumedLoc(match.Node->getExprLoc());
@@ -73,7 +69,7 @@ void AtomicMemoryOrderAnalysis::analyzeFeatures(){
         j[line_number_key_] = line_num;
         j[file_name_key_] = file_name;
         j[called_func_key_] = called_func;
-        j[is_default_key_] = is_default;
+        j[is_default_key_] = expr.length() == 0;
         js[memory_model].emplace_back(j);
     }
 
