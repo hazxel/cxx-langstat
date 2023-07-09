@@ -15,7 +15,8 @@ thread_usage = {}
 parallel_usage = {}
 lock_mutex_usage = {}
 atomic_usage = {}
-atomic_memroy_order = {}
+# atomic_memroy_order = {}
+atomic_memroy_order_function_usage = {}
 
 std_lib_usage = {}
 boost_lib_usage = {}    
@@ -223,17 +224,21 @@ for filename in os.listdir(prefix + '/' + analysis):
     f = open(prefix + '/' + analysis + '/' + filename, 'r')
     data = json.load(f)
 
-    for memory_order, calls in data["Summary"]["memory_model"].items():
-        if memory_order.startswith("std::memory_order_"):
-            memory_order = memory_order[len("std::memory_order_"):]
-            if memory_order.find("std::memory_order_") != -1:
-                mo1 = memory_order[0:memory_order.find("std::memory_order_")]
-                atomic_memroy_order[mo1] = atomic_memroy_order.get(mo1, 0) + calls
-                memory_order = memory_order[memory_order.find("std::memory_order_") + len("std::memory_order_"):]
-        atomic_memroy_order[memory_order] = atomic_memroy_order.get(memory_order, 0) + calls
-keys = list(atomic_memroy_order.keys())
-keys.sort(reverse=True)
-atomic_memroy_order = {k: atomic_memroy_order[k] for k in keys}
+    for function_name, memory_order_count_dict in data["Summary"]["memory_order"].items():
+        atomic_memroy_order_function_usage[function_name] = atomic_memroy_order_function_usage.get(function_name, {})
+        for memory_order, count in memory_order_count_dict.items():
+            memory_order = memory_order.replace("std::memory_order_", "")
+            atomic_memroy_order_function_usage[function_name][memory_order] = atomic_memroy_order_function_usage[function_name].get(memory_order, 0) + count
+#         if memory_order.startswith("std::memory_order_"):
+#             memory_order = memory_order[len("std::memory_order_"):]
+#             if memory_order.find("std::memory_order_") != -1:
+#                 mo1 = memory_order[0:memory_order.find("std::memory_order_")]
+#                 atomic_memroy_order[mo1] = atomic_memroy_order.get(mo1, 0) + calls
+#                 memory_order = memory_order[memory_order.find("std::memory_order_") + len("std::memory_order_"):]
+#         atomic_memroy_order[memory_order] = atomic_memroy_order.get(memory_order, 0) + calls
+# keys = list(atomic_memroy_order.keys())
+# keys.sort(reverse=True)
+# atomic_memroy_order = {k: atomic_memroy_order[k] for k in keys}
 
 
 # container lib usage
@@ -261,40 +266,40 @@ plt.barh(list(lib_usage.keys()), list(lib_usage.values()), height=0.4, align='ce
 plt.title("lib usage")
 plt.xlabel("total calls")
 plt.ylabel("libraries")
-# plt.show()
 plt.savefig(prefix + '/lib.png')
+plt.close()
 
 plt.figure(figsize = (10, 5))
 plt.barh(list(thread_usage.keys()), list(thread_usage.values()), height=0.4, align='center', color='maroon')
 plt.title("thread usage")
 plt.xlabel("total calls")
 plt.ylabel("libraries")
-# plt.show()
 plt.savefig(prefix + '/thread.png')
+plt.close()
 
 plt.figure(figsize = (10, 5))
 plt.barh(list(lock_mutex_usage.keys()), list(lock_mutex_usage.values()), height=0.4, align='center', color='maroon')
 plt.title("lock/mutex usage")
 plt.xlabel("total calls")
 plt.ylabel("libraries")
-# plt.show()
 plt.savefig(prefix + '/lock_mutex.png')
+plt.close()
 
 plt.figure(figsize = (10, 5))
 plt.barh(list(parallel_usage.keys()), list(parallel_usage.values()), height=0.4, align='center', color='maroon')
 plt.title("parallel execution usage")
 plt.xlabel("total calls")
 plt.ylabel("libraries")
-# plt.show()
 plt.savefig(prefix + '/parallel.png')
+plt.close()
 
 plt.figure(figsize = (10, 5))
 plt.barh(list(atomic_usage.keys()), list(atomic_usage.values()), height=0.4, align='center', color='maroon')
 plt.title("atomic usage")
 plt.xlabel("total calls")
 plt.ylabel("libraries")
-# plt.show()
 plt.savefig(prefix + '/atomic.png')
+plt.close()
 
 
 # statistics for each framework/library
@@ -303,40 +308,40 @@ plt.barh(list(std_lib_usage.keys()), list(std_lib_usage.values()), height=0.4, a
 plt.title("STL usage")
 plt.xlabel("total calls")
 plt.ylabel("usage")
-# plt.show()
 plt.savefig(prefix + '/std_lib.png')
+plt.close()
 
 plt.figure(figsize = (10, 5))
 plt.barh(list(tbb_lib_usage.keys()), list(tbb_lib_usage.values()), height=0.4, align='center', color='maroon')
 plt.title("TBB lib usage")
 plt.xlabel("total calls")
 plt.ylabel("usage")
-# plt.show()
 plt.savefig(prefix + '/tbb_lib.png')
+plt.close()
 
 plt.figure(figsize = (10, 5))
 plt.barh(list(openmp_lib_usage.keys()), list(openmp_lib_usage.values()), height=0.4, align='center', color='maroon')
 plt.title("OpenMP lib usage")
 plt.xlabel("total calls")
 plt.ylabel("usage")
-# plt.show()
 plt.savefig(prefix + '/omp_lib.png')
+plt.close()
 
 plt.figure(figsize = (10, 5))
 plt.barh(list(pthread_lib_usage.keys()), list(pthread_lib_usage.values()), height=0.4, align='center', color='maroon')
 plt.title("pthread lib usage")
 plt.xlabel("total calls")
 plt.ylabel("usage")
-# plt.show()
 plt.savefig(prefix + '/pthread_lib.png')
+plt.close()
 
 plt.figure(figsize = (10, 5))
 plt.barh(list(mpi_lib_usage.keys()), list(mpi_lib_usage.values()), height=0.4, align='center', color='maroon')
 plt.title("MPI lib usage")
 plt.xlabel("total calls")
 plt.ylabel("usage")
-# plt.show()
 plt.savefig(prefix + '/mpi_lib.png')
+plt.close()
 
 plt.figure(figsize = (10, 5))
 plt.barh(list(kokkos_lib_usage.keys()), list(kokkos_lib_usage.values()), height=0.4, align='center', color='maroon')
@@ -351,8 +356,8 @@ plt.barh(list(raja_lib_usage.keys()), list(raja_lib_usage.values()), height=0.4,
 plt.title("RAJA lib usage")
 plt.xlabel("total calls")
 plt.ylabel("usage")
-# plt.show()
 plt.savefig(prefix + '/raja_lib.png')
+plt.close()
 
 
 # statistics for all the projects
@@ -371,8 +376,8 @@ plt.title("concurrency support libraries usage of HPC projects")
 plt.xlabel("total number of calls")
 plt.ylabel("project name")
 plt.legend(set_of_libs)
-# plt.show()
 plt.savefig(prefix + '/project_lib.png')
+plt.close()
 
 
 # statistics for container prevalence
@@ -381,15 +386,24 @@ plt.barh(list(container_usage.keys()), list(container_usage.values()), height=0.
 plt.title("container usage")
 plt.xlabel("total calls")
 plt.ylabel("container type")
-# plt.show()
 plt.savefig(prefix + '/container.png')
+plt.close()
 
 
 # statistics for atomic memory order
-plt.figure(figsize = (10, 5))
-plt.barh(list(atomic_memroy_order.keys()), list(atomic_memroy_order.values()), height=0.4, align='center', color='maroon')
-plt.title("atomic memory order")
-plt.xlabel("total usage")
-plt.ylabel("memory order")
-# plt.show()
-plt.savefig(prefix + '/atomic_memory_order.png')
+# plt.figure(figsize = (10, 5))
+# plt.barh(list(atomic_memroy_order.keys()), list(atomic_memroy_order.values()), height=0.4, align='center', color='maroon')
+# plt.title("atomic memory order")
+# plt.xlabel("total usage")
+# plt.ylabel("memory order")
+# # plt.show()
+# plt.savefig(prefix + '/atomic_memory_order.png')
+
+for function_name, memory_order_count_dict in atomic_memroy_order_function_usage.items():
+    plt.figure(figsize = (10, 5))
+    plt.barh(list(memory_order_count_dict.keys()), list(memory_order_count_dict.values()), height=0.4, align='center', color='maroon')
+    plt.title("atomic memory order usage of " + function_name)
+    plt.xlabel("total usage")
+    plt.ylabel("memory order")
+    plt.savefig(prefix + '/atomic_memory_order_' + function_name + '.png')
+    plt.close()

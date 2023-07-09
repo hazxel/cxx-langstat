@@ -8,6 +8,8 @@ add_library(Analyses
     ConstexprAnalysis.cpp
     ContainerLibAnalysis.cpp
     CyclomaticComplexityAnalysis.cpp
+    STLMutexScopeAnalysis.cpp
+    ScopeAnalysis.cpp
     FunctionParameterAnalysis.cpp
     LoopDepthAnalysis.cpp
     LoopKindAnalysis.cpp

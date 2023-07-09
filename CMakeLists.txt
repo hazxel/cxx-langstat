@@ -94,6 +94,7 @@ target_link_libraries(${PROJECT_NAME}
     MatchingExtractor
     Deduplicator
     Utils
+    RecursiveASTCollectVisitor
     ${llvm_libs} ${clang_libs}
 )
 

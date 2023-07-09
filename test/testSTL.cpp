@@ -2,6 +2,7 @@
 #include <numeric>
 #include <vector>
 #include <atomic>
+#include <mutex>
  
 int main()
 {
@@ -26,4 +27,15 @@ int main()
     aacnt.load();
     aacnt.compare_exchange_strong(a, b, std::memory_order_relaxed, std::memory_order_relaxed);
     aacnt++;
+
+    {
+        {
+            v.push_back(1);
+            std::mutex m;
+            v.push_back(2);
+            std::lock_guard<std::mutex> lg(m);
+            v.push_back(3);
+            std::sort(v.begin(), v.end());
+        }
+    }
 }

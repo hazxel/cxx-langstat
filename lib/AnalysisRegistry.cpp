@@ -12,6 +12,8 @@
 #include "cxx-langstat/Analyses/ConstexprAnalysis.h"
 #include "cxx-langstat/Analyses/CyclomaticComplexityAnalysis.h"
 #include "cxx-langstat/Analyses/ContainerLibAnalysis.h"
+#include "cxx-langstat/Analyses/STLMutexScopeAnalysis.h"
+#include "cxx-langstat/Analyses/ScopeAnalysis.h"
 #include "cxx-langstat/Analyses/FunctionParameterAnalysis.h"
 #include "cxx-langstat/Analyses/LoopDepthAnalysis.h"
 #include "cxx-langstat/Analyses/LoopKindAnalysis.h"
@@ -61,6 +63,8 @@ void AnalysisRegistry::createFreshAnalyses(){
         Analyses.emplace_back(std::make_unique<ConcurrencySupportLibraryAnalysis>());
     if(Options.EnabledAnalyses.contains("cslma"))
         Analyses.emplace_back(std::make_unique<ConcurrencySupportLibraryMethodAnalysis>());
+    if(Options.EnabledAnalyses.contains("sa"))
+        Analyses.emplace_back(std::make_unique<ScopeAnalysis>());
     if(Options.EnabledAnalyses.contains("fpa"))
         Analyses.emplace_back(std::make_unique<FunctionParameterAnalysis>());
     if(Options.EnabledAnalyses.contains("lda"))
@@ -71,6 +75,8 @@ void AnalysisRegistry::createFreshAnalyses(){
         Analyses.emplace_back(std::make_unique<msa::MoveSemanticsAnalysis>());
     if(Options.EnabledAnalyses.contains("ompeda"))
         Analyses.emplace_back(std::make_unique<OMPExecutableDirectiveAnalysis>());
+    if(Options.EnabledAnalyses.contains("smsa"))
+        Analyses.emplace_back(std::make_unique<STLMutexScopeAnalysis>());
     if(Options.EnabledAnalyses.contains("tia"))
         Analyses.emplace_back(std::make_unique<TemplateInstantiationAnalysis>());
     if(Options.EnabledAnalyses.contains("tpa"))
