@@ -1,4 +1,5 @@
 #include "cxx-langstat/RecursiveASTCollectVisitor.h"
+#include "cxx-langstat/Utils.h"
 
 using namespace clang;
 
@@ -29,6 +30,9 @@ bool RecursiveASTCollectVisitor::VisitCXXMemberCalExpr(CXXMemberCallExpr *Call) 
     auto persumed_loc = Context->getSourceManager().getPresumedLoc(Call->getExprLoc());
     const char* file_name = persumed_loc.getFilename();
 
+    if (isDependentHeader(file_name) || (!isInterestingType(callee_type)))
+        return true;
+
     nlohmann::ordered_json j;
     j[feature_member_method_name_key_] = called_func;
     j[feature_file_name_key_] = file_name;
@@ -49,13 +53,16 @@ bool RecursiveASTCollectVisitor::VisitCallExpr(CallExpr *Call) {
     if (!callee)
         return true;
 
-    std::string type = callee->getQualifiedNameAsString();
+    std::string function_name = callee->getQualifiedNameAsString();
     unsigned line_num = Context->getSourceManager().getSpellingLineNumber(Call->getExprLoc());
     auto persumed_loc = Context->getSourceManager().getPresumedLoc(Call->getExprLoc());
     const char* file_name = persumed_loc.getFilename();
 
+    if (isDependentHeader(file_name) || (!isInterestingFunc(function_name)))
+        return true;
+
     nlohmann::ordered_json j;
-    j[feature_function_name_key_] = type;
+    j[feature_function_name_key_] = function_name;
     j[feature_file_name_key_] = file_name;
     j[feature_line_num_key_] = line_num;
 

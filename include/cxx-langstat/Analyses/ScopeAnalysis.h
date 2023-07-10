@@ -26,7 +26,7 @@ private:
     static Deduplicator deduplicator_;
 
     clang::ast_matchers::internal::Matcher<clang::NamedDecl> names_;
-    std::string header_regex_ = "mutex|bits/std_mutex.h";
+    std::string header_regex_;
 
     static constexpr auto ShorthandName = "sa";
     static constexpr auto scope_key_ = "scope";

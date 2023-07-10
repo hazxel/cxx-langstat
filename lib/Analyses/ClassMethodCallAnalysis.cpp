@@ -73,6 +73,9 @@ void ClassMethodCallAnalysis::gatherData(const Matches<clang::CXXMemberCallExpr>
         auto persumed_loc = Context->getSourceManager().getPresumedLoc(match.Node->getExprLoc());
         const char* file_name = persumed_loc.getFilename();
 
+        if(isDependentHeader(file_name))
+            continue;
+
         ordered_json j;
         j[feature_method_name_key_] = called_func;
         j[feature_file_name_key_] = file_name;
@@ -100,6 +103,9 @@ void ClassMethodCallAnalysis::gatherData(const Matches<clang::VarDecl>& matches)
         unsigned line_num = Context->getSourceManager().getSpellingLineNumber(match.Node->getLocation());
         auto persumed_loc = Context->getSourceManager().getPresumedLoc(match.Node->getLocation());
         const char* file_name = persumed_loc.getFilename();
+
+        if(isDependentHeader(file_name))
+            continue;
 
         ordered_json j;
         j[feature_file_name_key_] = file_name;
@@ -131,6 +137,9 @@ void ClassMethodCallAnalysis::gatherData(const Matches<clang::CallExpr>& matches
         unsigned line_num = Context->getSourceManager().getSpellingLineNumber(match.Node->getExprLoc());
         auto persumed_loc = Context->getSourceManager().getPresumedLoc(match.Node->getExprLoc());
         const char* file_name = persumed_loc.getFilename();
+
+        if(isDependentHeader(file_name))
+            continue;
 
         ordered_json j;
         j[feature_method_name_key_] = type;
@@ -174,8 +183,7 @@ void ClassMethodCallAnalysis::funcPrevalence(const ordered_json& in, ordered_jso
     std::map<std::string, unsigned> m;
     for (auto& [func_name, func_list] : in.items()) {
         for (auto& func : func_list) {
-            if (isDependentHeader(func[feature_file_name_key_].get<string>())
-                || deduplicator_.isDuplicated(func_name + func[feature_file_name_key_].get<string>() + std::to_string(func[feature_line_num_key_].get<int>()))) {
+            if (deduplicator_.isDuplicated(func_name + func[feature_file_name_key_].get<string>() + std::to_string(func[feature_line_num_key_].get<int>()))) {
                 continue;
             }
             m[func[feature_method_name_key_]]++;
@@ -188,8 +196,7 @@ void ClassMethodCallAnalysis::methodPrevalence(const ordered_json& in, ordered_j
     std::map<std::string, std::map<std::string, unsigned>> m;
     for (auto& [type_name, func_list] : in.items()) {
         for (auto& func : func_list) {
-            if (isDependentHeader(func[feature_file_name_key_].get<string>())
-                || deduplicator_.isDuplicated(type_name + func[feature_method_name_key_].get<string>() + func[feature_file_name_key_].get<string>() + std::to_string(func[feature_line_num_key_].get<int>()))) {
+            if (deduplicator_.isDuplicated(type_name + func[feature_method_name_key_].get<string>() + func[feature_file_name_key_].get<string>() + std::to_string(func[feature_line_num_key_].get<int>()))) {
                 continue;
             }
             m[type_name][func[feature_method_name_key_]]++;
@@ -202,8 +209,7 @@ void ClassMethodCallAnalysis::constructorPrevalence(const ordered_json& in, orde
     std::map<std::string, int> m;
     for (auto& [type_name, call_list] : in.items()) {
         for (auto& call : call_list) {
-            if (isDependentHeader(call[feature_file_name_key_].get<string>())
-                || deduplicator_.isDuplicated(type_name + call[feature_file_name_key_].get<string>() + std::to_string(call[feature_line_num_key_].get<int>()))) {
+            if (deduplicator_.isDuplicated(type_name + call[feature_file_name_key_].get<string>() + std::to_string(call[feature_line_num_key_].get<int>()))) {
                 continue;
             }
             m[type_name]++;

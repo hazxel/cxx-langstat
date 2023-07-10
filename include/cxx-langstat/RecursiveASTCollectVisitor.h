@@ -28,27 +28,41 @@ public:
         currentInstanceName_ = instancename;
     }
 
-    // inline const std::unordered_map<std::string, std::vector<std::string>>& getFeatures() {
-    //     return features_;
-    // }
     inline const nlohmann::json getFeatures() {
         return features_;
     }
 
-    // inline const std::vector<std::map<std::string, std::string>>& getFunctionFeatures() {
-    //     return functionFeatures_;
-    // }
+private:
+    inline bool isInterestingType(std::string type) {
+        for (auto &t : interestingTypes_) {
+            if (type.find(t) != std::string::npos)
+                return true;
+        }
+        return false;
+    }
 
-    // inline const std::map<std::string, std::vector<std::map<std::string, std::string>>>& getMemberMethodFeatures() {
-    //     return memberMethodFeatures_;
-    // }
+    inline bool isInterestingFunc(std::string func) {
+        for (auto &f : interestingFuncs_) {
+            if (func.find(f) != std::string::npos)
+                return true;
+        }
+        return false;
+    }
 
 private:
     clang::LangOptions lo_;
     clang::PrintingPolicy pp_;
+
     clang::ASTContext *Context;
     bool hasFoundInstance = false;
     std::string currentInstanceName_;
+    std::vector<std::string> interestingTypes_ = {
+        "vector", "list", "set", "map", "unordered_map", "unordered_set", "deque", "forward_list", "stack", "queue", "priority_queue"
+    };
+    std::vector<std::string> interestingFuncs_ = {
+        "sort", "move", "free", "init", "atomic", "load", "store"
+    };
+
     nlohmann::json features_;
     std::vector<std::map<std::string, std::string>> functionFeatures_;
     std::map<std::string, std::vector<std::map<std::string, std::string>>> memberMethodFeatures_;
