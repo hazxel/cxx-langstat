@@ -14,8 +14,6 @@ using ordered_json = nlohmann::ordered_json;
 
 auto ScopeAnalysis::deduplicator_ = Deduplicator();
 
-//-----------------------------------------------------------------------------
-// FIXME: implementation
 void ScopeAnalysis::analyzeFeatures(){    
     auto constructorcallmatcher = varDecl(has(cxxConstructExpr()), hasType(cxxRecordDecl(names_, isExpansionInFileMatching(header_regex_)))).bind("ConstructorCall");
     Matches<clang::VarDecl> constructorcalls_ = getASTNodes<VarDecl>(Extractor.extract2(*Context, constructorcallmatcher), "ConstructorCall");
@@ -23,9 +21,18 @@ void ScopeAnalysis::analyzeFeatures(){
     auto typedefconstructorcalls = getASTNodes<VarDecl>(Extractor.extract2(*Context, typedefconstructorcallmatcher), "TypedefConstructorCall");
     constructorcalls_.insert(constructorcalls_.end(), typedefconstructorcalls.begin(), typedefconstructorcalls.end());
 
+    LangOptions lo;
+    PrintingPolicy pp(lo);
+    pp.PrintCanonicalTypes = true;
+    pp.SuppressTagKeyword = false;
+    pp.SuppressScope = false;
+    pp.SuppressUnwrittenScope = true;
+    pp.FullyQualifiedName = true;
+    pp.Bool = true;
+
     std::unordered_map<std::string, std::vector<const clang::CompoundStmt*>> enclosingStmtsMap;
     for (auto match : constructorcalls_) {
-        std::string instancename = match.Node->getType().getAsString();
+        std::string instancename = match.Node->getType().getAsString(pp);
         const clang::Stmt* currentStmt = llvm::dyn_cast<clang::Stmt>(Context->getParents(*match.Node).begin()->get<clang::Stmt>());
 
         while (currentStmt) {
@@ -52,9 +59,10 @@ void ScopeAnalysis::analyzeFeatures(){
 
     Features[scope_key_] = visitor.getFeatures();
 }
-// FIXME: implementation
+
+
 void ScopeAnalysis::processFeatures(nlohmann::ordered_json j){
-    nlohmann::ordered_json js;
+    nlohmann::ordered_json js(nlohmann::detail::value_t::object);
     for (auto& [instancename, twofeatures] : j.at(scope_key_).items()) {
         std::map<std::string, int> func_count;
         for (auto& func_call : twofeatures[RecursiveASTCollectVisitor::feature_function_]) {
@@ -91,6 +99,3 @@ void ScopeAnalysis::processFeatures(nlohmann::ordered_json j){
     }
     Statistics[scope_key_] = js;
 }
-
-//-----------------------------------------------------------------------------
-

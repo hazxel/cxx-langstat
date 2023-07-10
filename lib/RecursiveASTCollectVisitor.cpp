@@ -2,8 +2,17 @@
 
 using namespace clang;
 
+RecursiveASTCollectVisitor::RecursiveASTCollectVisitor(ASTContext *Context) : Context(Context), lo_(), pp_(lo_) {
+    pp_.PrintCanonicalTypes = true;
+    pp_.SuppressTagKeyword = false;
+    pp_.SuppressScope = false;
+    pp_.SuppressUnwrittenScope = true;
+    pp_.FullyQualifiedName = true;
+    pp_.Bool = true;
+}
+
 bool RecursiveASTCollectVisitor::VisitVarDecl(VarDecl *Var) {
-    if (Var->getType().getAsString() == currentInstanceName_) {
+    if (Var->getType().getAsString(pp_) == currentInstanceName_) {
         hasFoundInstance = true;
     }
     return true;

@@ -12,7 +12,7 @@
 
 class RecursiveASTCollectVisitor : public clang::RecursiveASTVisitor<RecursiveASTCollectVisitor> {
 public:
-    explicit RecursiveASTCollectVisitor(clang::ASTContext *Context) : Context(Context) {}
+    explicit RecursiveASTCollectVisitor(clang::ASTContext *Context);
 
     bool VisitVarDecl(clang::VarDecl *Var);
 
@@ -44,6 +44,8 @@ public:
     // }
 
 private:
+    clang::LangOptions lo_;
+    clang::PrintingPolicy pp_;
     clang::ASTContext *Context;
     bool hasFoundInstance = false;
     std::string currentInstanceName_;
