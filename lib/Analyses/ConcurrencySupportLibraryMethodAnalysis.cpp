@@ -6,7 +6,8 @@ ConcurrencySupportLibraryMethodAnalysis::ConcurrencySupportLibraryMethodAnalysis
         // standard library concurrency supports
         "std::thread", "std::jthread", // threads
         "std::atomic", "std::atomic_int", "std::atomic_uint", "std::atomic_bool", "std::atomic_char", "std::atomic_schar", "std::atomic_uchar", "std::atomic_short", "std::atomic_ushort", "std::atomic_wchar_t", "std::atomic_char16_t", "std::atomic_char32_t", "std::atomic_int8_t", "std::atomic_uint8_t", "std::atomic_int16_t", "std::atomic_uint16_t", "std::atomic_int32_t", "std::atomic_uint32_t", "std::atomic_int64_t", "std::atomic_uint64_t", "std::atomic_int_least8_t", "std::atomic_uint_least8_t", "std::atomic_int_least16_t", "std::atomic_uint_least16_t", "std::atomic_int_least32_t", "std::atomic_uint_least32_t", "std::atomic_int_least64_t", "std::atomic_uint_least64_t", "std::atomic_int_fast8_t", "std::atomic_uint_fast8_t", "std::atomic_int_fast16_t", "std::atomic_uint_fast16_t", "std::atomic_int_fast32_t", "std::atomic_uint_fast32_t", "std::atomic_int_fast64_t", "std::atomic_uint_fast64_t", "std::atomic_intptr_t", "std::atomic_uintptr_t", "std::atomic_intmax_t", "std::atomic_uintmax_t",  // atomic operations
-        "std::mutex", "std::lock_guard", "std::unique_lock", // locking
+        "std::mutex", "std::timed_mutex", "std::recursive_mutex", "std::recursive_timed_mutex", "std::shared_mutex", "std::shared_timed_mutex", // mutex
+        "std::lock_guard", "std::unique_lock", "std::scoped_lock", "std::shared_lock", // locking
         "std::condition_variable", // condition variables
         "std::promise", "std::future", "std::shared_future", // futures
         "std::for_each", "std::reduce", "std::accumulate", "std::execution", // parallel algorithms
@@ -34,7 +35,7 @@ ConcurrencySupportLibraryMethodAnalysis::ConcurrencySupportLibraryMethodAnalysis
         // TBB
         "tbb::task_scheduler_init", "tbb::task_group", "tbb::parallel_for", "tbb::parallel_for_each",
         "tbb::parallel_invoke", "tbb::parallel_reduce", "tbb::parallel_scan", "tbb::parallel_sort",
-        "tbb::parallel_pipeline", "tbb::task", "tbb::scoped_lock", "tbb::mutex", "tbb::spin_mutex",
+        "tbb::parallel_pipeline", "tbb::task", "tbb::mutex::scoped_lock", "tbb::mutex", "tbb::spin_mutex",
         // Boost
         "boost::thread", "boost::thread_group", "boost::thread_specific_ptr",
         "boost::mutex", "boost::recursive_mutex", "boost::shared_mutex", "boost::unique_lock",
@@ -69,9 +70,9 @@ ConcurrencySupportLibraryMethodAnalysis::ConcurrencySupportLibraryMethodAnalysis
         "cl::sycl::access::target::image", "cl::sycl::access::target::image_array"
     ),
     // libc++:
-    "thread|atomic|mutex|conditional_variable|future|algo.h|numeric|"
+    "thread|atomic|mutex|shared_mutex|conditional_variable|future|algo.h|numeric|"
     // libstdc++
-    // "bits/std_thread.h|std/atomic|bits/std_mutex.h|std/condition_variable|std/future|std/parallel/algo.h|"
+    // "bits/std_thread.h|std/atomic|bits/std_mutex.h|std/shared_mutex|std/condition_variable|std/future|std/parallel/algo.h|"
     // pthreads
     "pthread.h|"
     // openmp
