@@ -1,5 +1,6 @@
 #include <omp.h>
 #include <stdio.h>
+#include <vector>
 
 // #include <iostream>
 // #include <unistd.h>
@@ -19,6 +20,15 @@ int main() {
     for (int i = 0; i < 100; ++i) {
 		printf("Hello from thread %d, nthreads %d\n", omp_get_thread_num(), omp_get_num_threads());
 	}
+
+std::vector<int> v(100);
+#pragma omp critical
+{
+	v[0] = 1;
+}
+
+#pragma omp critical
+	v[0] = 1;
 
 // omp_lock_t lock;
 

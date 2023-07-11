@@ -6,7 +6,6 @@
 #include <vector>
 #include <unordered_map>
 #include <map>
-#include <iostream>
 
 using namespace clang;
 using namespace clang::ast_matchers;
@@ -20,6 +19,10 @@ void ScopeAnalysis::analyzeFeatures(){
     auto typedefconstructorcallmatcher = varDecl(has(cxxConstructExpr()), hasType(typedefDecl(names_, isExpansionInFileMatching(header_regex_)))).bind("TypedefConstructorCall");
     auto typedefconstructorcalls = getASTNodes<VarDecl>(Extractor.extract2(*Context, typedefconstructorcallmatcher), "TypedefConstructorCall");
     constructorcalls_.insert(constructorcalls_.end(), typedefconstructorcalls.begin(), typedefconstructorcalls.end());
+
+    const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::OMPCriticalDirective> ompCriticalDirective;
+    auto ompCriticalMatcher = ompCriticalDirective(hasStructuredBlock(stmt())).bind("OMPCriticalBlock");
+    auto ompCriticalDirs = getASTNodes<OMPCriticalDirective>(Extractor.extract2(*Context, ompCriticalMatcher), "OMPCriticalBlock");
 
     LangOptions lo;
     PrintingPolicy pp(lo);
@@ -55,6 +58,12 @@ void ScopeAnalysis::analyzeFeatures(){
             visitor.reset();
             visitor.TraverseStmt(const_cast<clang::CompoundStmt*>(stmt));
         }
+    }
+
+    visitor.setInstanceName("#pragma omp critical");
+    visitor.disableInstanceCheck();
+    for (auto ompDir : ompCriticalDirs) {
+        visitor.TraverseStmt(const_cast<clang::Stmt*>(ompDir.Node->getStructuredBlock()));
     }
 
     Features[scope_key_] = visitor.getFeatures();

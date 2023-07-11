@@ -8,6 +8,7 @@
 
 #include "clang/AST/RecursiveASTVisitor.h"
 #include "clang/ASTMatchers/ASTMatchers.h"
+#include "clang/AST/StmtOpenMP.h"
 
 
 class RecursiveASTCollectVisitor : public clang::RecursiveASTVisitor<RecursiveASTCollectVisitor> {
@@ -28,6 +29,10 @@ public:
 
     inline void setInstanceName(std::string instancename) {
         currentInstanceName_ = instancename;
+    }
+
+    inline void disableInstanceCheck() {
+        hasFoundInstance = true;
     }
 
     inline const nlohmann::json getFeatures() {
