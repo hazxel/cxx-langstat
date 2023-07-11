@@ -36,6 +36,7 @@ int main()
             std::lock_guard<std::mutex> lg(m);
             v.push_back(3);
             std::sort(v.begin(), v.end());
+            v[0] = 1;
         }
     }
 }

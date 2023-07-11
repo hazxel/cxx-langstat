@@ -18,6 +18,8 @@ public:
 
     bool VisitCXXMemberCalExpr(clang::CXXMemberCallExpr *Call);
 
+    bool VisitCXXOperatorCallExpr(clang::CXXOperatorCallExpr *Call);
+
     bool VisitCallExpr(clang::CallExpr *Call);
 
     inline void reset() {
@@ -49,6 +51,22 @@ private:
         return false;
     }
 
+    inline bool isInterestingOperator(clang::OverloadedOperatorKind op) {
+        for (auto &o : interestingOperators_) {
+            if (op == o)
+                return true;
+        }
+        return false;
+    }
+
+    inline std::string removeTemplateArgs(std::string type) {
+        auto pos = type.find('<');
+        if (pos != std::string::npos) {
+            type = type.substr(0, pos);
+        }
+        return type;
+    }
+
 private:
     clang::LangOptions lo_;
     clang::PrintingPolicy pp_;
@@ -61,6 +79,9 @@ private:
     };
     std::vector<std::string> interestingFuncs_ = {
         "sort", "move", "free", "init", "atomic", "load", "store"
+    };
+    std::vector<clang::OverloadedOperatorKind> interestingOperators_ = {
+        clang::OO_Subscript
     };
 
     nlohmann::json features_;
