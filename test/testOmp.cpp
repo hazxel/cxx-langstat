@@ -5,6 +5,11 @@
 // #include <iostream>
 // #include <unistd.h>
 
+
+void dummy(std::vector<int>& v, int i){
+	v[i] = 1;
+}
+
 int main() {
 #pragma omp parallel
 {
@@ -28,7 +33,7 @@ std::vector<int> v(100);
 }
 
 #pragma omp critical
-	v[0] = 1;
+	dummy(v, v.size() - 1);
 
 // omp_lock_t lock;
 

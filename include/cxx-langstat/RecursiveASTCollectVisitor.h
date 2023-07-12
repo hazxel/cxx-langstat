@@ -83,7 +83,7 @@ private:
         "vector", "list", "set", "map", "unordered_map", "unordered_set", "deque", "forward_list", "stack", "queue", "priority_queue"
     };
     std::vector<std::string> interestingFuncs_ = {
-        "sort", "move", "free", "init", "atomic", "load", "store"
+        "sort", "move", "free", "init", "atomic", "load", "store", "MPI_"
     };
     std::vector<clang::OverloadedOperatorKind> interestingOperators_ = {
         clang::OO_Subscript
