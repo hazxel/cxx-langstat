@@ -1,11 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <vector>
 
 void *print_message_function( void *ptr );
 
 int main()
 {
+     std::vector<int> v;
+     pthread_mutex_t mutex;
+     pthread_mutex_lock(&mutex);
+     v.push_back(1);
+     pthread_mutex_unlock(&mutex);
+
+
      pthread_t thread1, thread2;
      const char *message1 = "Thread 1";
      const char *message2 = "Thread 2";

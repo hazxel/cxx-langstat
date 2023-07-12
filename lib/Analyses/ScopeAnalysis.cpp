@@ -14,15 +14,12 @@ using ordered_json = nlohmann::ordered_json;
 auto ScopeAnalysis::deduplicator_ = Deduplicator();
 
 void ScopeAnalysis::analyzeFeatures(){    
+    // STL like mutex and lock
     auto constructorcallmatcher = varDecl(has(cxxConstructExpr()), hasType(cxxRecordDecl(names_, isExpansionInFileMatching(header_regex_)))).bind("ConstructorCall");
     Matches<clang::VarDecl> constructorcalls_ = getASTNodes<VarDecl>(Extractor.extract2(*Context, constructorcallmatcher), "ConstructorCall");
     auto typedefconstructorcallmatcher = varDecl(has(cxxConstructExpr()), hasType(typedefDecl(names_, isExpansionInFileMatching(header_regex_)))).bind("TypedefConstructorCall");
     auto typedefconstructorcalls = getASTNodes<VarDecl>(Extractor.extract2(*Context, typedefconstructorcallmatcher), "TypedefConstructorCall");
     constructorcalls_.insert(constructorcalls_.end(), typedefconstructorcalls.begin(), typedefconstructorcalls.end());
-
-    const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::OMPCriticalDirective> ompCriticalDirective;
-    auto ompCriticalMatcher = ompCriticalDirective(hasStructuredBlock(stmt())).bind("OMPCriticalBlock");
-    auto ompCriticalDirs = getASTNodes<OMPCriticalDirective>(Extractor.extract2(*Context, ompCriticalMatcher), "OMPCriticalBlock");
 
     LangOptions lo;
     PrintingPolicy pp(lo);
@@ -60,10 +57,41 @@ void ScopeAnalysis::analyzeFeatures(){
         }
     }
 
+
+    // openmp critical block
+    const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::OMPCriticalDirective> ompCriticalDirective;
+    auto ompCriticalMatcher = ompCriticalDirective(hasStructuredBlock(stmt())).bind("OMPCriticalBlock");
+    auto ompCriticalDirs = getASTNodes<OMPCriticalDirective>(Extractor.extract2(*Context, ompCriticalMatcher), "OMPCriticalBlock");
+
     visitor.setInstanceName("#pragma omp critical");
-    visitor.disableInstanceCheck();
     for (auto ompDir : ompCriticalDirs) {
+        visitor.disableInstanceCheck();
         visitor.TraverseStmt(const_cast<clang::Stmt*>(ompDir.Node->getStructuredBlock()));
+    }
+
+
+    // pthread mutex lock
+    auto pthreadMutexLockMatcher = callExpr(callee(functionDecl(hasName("pthread_mutex_lock"), isExpansionInFileMatching("pthread.h")))).bind("PthreadMutexLock");
+    auto pthreadMutexLocks = getASTNodes<CallExpr>(Extractor.extract2(*Context, pthreadMutexLockMatcher), "PthreadMutexLock");
+
+    std::vector<const clang::CompoundStmt*> enclosingStmts;
+    for (auto match : pthreadMutexLocks) {
+        unsigned line_num = Context->getSourceManager().getSpellingLineNumber(match.Node->getExprLoc());
+        const clang::Stmt* currentStmt = llvm::dyn_cast<clang::Stmt>(Context->getParents(*match.Node).begin()->get<clang::Stmt>());
+
+        while (currentStmt) {
+            if (const clang::CompoundStmt* compoundStmt = llvm::dyn_cast<clang::CompoundStmt>(currentStmt)) {
+                enclosingStmts.push_back(compoundStmt);
+                break;
+            }
+            currentStmt = Context->getParents(*currentStmt).begin()->get<clang::Stmt>();
+        }
+    }
+
+    visitor.setInstanceName("pthread_mutex_lock");
+    for (auto stmt : enclosingStmts) {
+        visitor.reset();
+        visitor.TraverseStmt(const_cast<clang::CompoundStmt*>(stmt));
     }
 
     Features[scope_key_] = visitor.getFeatures();

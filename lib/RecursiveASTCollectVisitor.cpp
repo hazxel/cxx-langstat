@@ -79,9 +79,6 @@ bool RecursiveASTCollectVisitor::VisitCXXOperatorCallExpr(clang::CXXOperatorCall
 }
 
 bool RecursiveASTCollectVisitor::VisitCallExpr(CallExpr *Call) {
-    if (!hasFoundInstance)
-        return true;
-
     if (auto c = llvm::dyn_cast<CXXMemberCallExpr>(Call)) {
         return VisitCXXMemberCalExpr(c);
     }
@@ -91,6 +88,17 @@ bool RecursiveASTCollectVisitor::VisitCallExpr(CallExpr *Call) {
         return true;
 
     std::string function_name = callee->getQualifiedNameAsString();
+    if (function_name == "pthread_mutex_lock") {
+        hasFoundInstance = true;
+        return true;
+    } else if(function_name == "pthread_mutex_unlock") {
+        hasFoundInstance = false;
+        return true;
+    }
+
+    if (!hasFoundInstance)
+        return true;
+
     unsigned line_num = Context->getSourceManager().getSpellingLineNumber(Call->getExprLoc());
     auto persumed_loc = Context->getSourceManager().getPresumedLoc(Call->getExprLoc());
     const char* file_name = persumed_loc.getFilename();
