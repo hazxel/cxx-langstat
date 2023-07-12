@@ -5,7 +5,6 @@
 #include <map>
 #include <string>
 #include <cstring>
-#include <iostream>
 
 #include "cxx-langstat/Analyses/ClassMethodCallAnalysis.h"
 #include "cxx-langstat/Utils.h"
@@ -15,8 +14,6 @@ using namespace clang::ast_matchers;
 using ordered_json = nlohmann::ordered_json;
 using std::string;
 using std::vector;
-using std::cout;
-using std::endl;
 
 auto ClassMethodCallAnalysis::deduplicator_ = Deduplicator();
 

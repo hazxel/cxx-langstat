@@ -106,8 +106,7 @@ void ScopeAnalysis::processFeatures(nlohmann::ordered_json j){
             std::string function_name = func_call[RecursiveASTCollectVisitor::feature_function_name_key_].get<std::string>();
             std::string file_name = func_call[RecursiveASTCollectVisitor::feature_file_name_key_].get<std::string>();
             int line_num = func_call[RecursiveASTCollectVisitor::feature_line_num_key_].get<int>();
-            if (isDependentHeader(file_name)
-                || deduplicator_.isDuplicated(file_name + std::to_string(line_num))) {
+            if (deduplicator_.isDuplicated(file_name + std::to_string(line_num))) {
                 continue;
             }
             func_count[function_name]++;
@@ -122,8 +121,7 @@ void ScopeAnalysis::processFeatures(nlohmann::ordered_json j){
                 std::string method_name = member_func[RecursiveASTCollectVisitor::feature_member_method_name_key_].get<std::string>();
                 std::string file_name = member_func[RecursiveASTCollectVisitor::feature_file_name_key_].get<std::string>();
                 int line_num = member_func[RecursiveASTCollectVisitor::feature_line_num_key_].get<int>();
-                if (isDependentHeader(file_name)
-                    || deduplicator_.isDuplicated(file_name + std::to_string(line_num))) {
+                if (deduplicator_.isDuplicated(file_name + std::to_string(line_num))) {
                     continue;
                 }
                 method_count[type_name][method_name]++;

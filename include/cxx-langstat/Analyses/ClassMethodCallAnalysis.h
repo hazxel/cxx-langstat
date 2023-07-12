@@ -26,7 +26,6 @@ private:
     void funcPrevalence(const nlohmann::ordered_json &in, nlohmann::ordered_json& res);
     void constructorPrevalence(const nlohmann::ordered_json &in, nlohmann::ordered_json& res);
     void methodPrevalence(const nlohmann::ordered_json &in, nlohmann::ordered_json& res);
-    static bool isDuplicated(const std::string& str);
 
     static Deduplicator deduplicator_;
     clang::ast_matchers::internal::Matcher<clang::NamedDecl> names_;
