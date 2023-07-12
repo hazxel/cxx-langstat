@@ -23,7 +23,7 @@ bool RecursiveASTCollectVisitor::VisitCXXMemberCalExpr(CXXMemberCallExpr *Call) 
     if (!hasFoundInstance)
         return true;
     
-    std::string callee_type = Call->getObjectType().getAsString();
+    std::string callee_type = Call->getObjectType().getAsString(pp_);
     std::string called_func = Call->getMethodDecl()->getNameAsString();
     
     callee_type = removeTemplateArgs(callee_type);
@@ -52,7 +52,7 @@ bool RecursiveASTCollectVisitor::VisitCXXOperatorCallExpr(clang::CXXOperatorCall
     if (!isInterestingOperator(operator_type))
         return true;
 
-    std::string callee_type = Call->getArg(0)->getType().getAsString(); // should always have at least one arg
+    std::string callee_type = Call->getArg(0)->getType().getAsString(pp_); // should always have at least one arg
     callee_type = removeTemplateArgs(callee_type);
     if (!isInterestingType(callee_type))
         return true;
