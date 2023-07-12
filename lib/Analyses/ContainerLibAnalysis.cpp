@@ -39,10 +39,10 @@ ContainerLibAnalysis::ContainerLibAnalysis() : TemplateInstantiationAnalysis(
     // libc++
     "vector|list|forward_list|array|map|set|unordered_map|unordered_set|queue|deque|priority_queue|stack|"
     // tbb
-    "concurrent_vector|concurrent_unordered_map|concurrent_unordered_set|concurrent_queue|"
+    "tbb/concurrent_vector.h|tbb/concurrent_unordered_map.h|tbb/concurrent_unordered_set.h|tbb/concurrent_queue.h|"
     // ppl
-    "concurrent_vector|concurrent_queue|concurrent_stack|concurrent_unordered_map|concurrent_unordered_multimap"
-){}
+    "concurrent_vector.h|concurrent_queue.h|concurrent_stack.h|concurrent_unordered_map.h|concurrent_unordered_multimap.h"
+) {}
 
 namespace {
 

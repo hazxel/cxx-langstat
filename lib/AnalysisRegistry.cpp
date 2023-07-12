@@ -12,6 +12,7 @@
 #include "cxx-langstat/Analyses/ConstexprAnalysis.h"
 #include "cxx-langstat/Analyses/CyclomaticComplexityAnalysis.h"
 #include "cxx-langstat/Analyses/ContainerLibAnalysis.h"
+#include "cxx-langstat/Analyses/DataContainerAnalysis.h"
 #include "cxx-langstat/Analyses/STLMutexScopeAnalysis.h"
 #include "cxx-langstat/Analyses/ScopeAnalysis.h"
 #include "cxx-langstat/Analyses/FunctionParameterAnalysis.h"
@@ -63,6 +64,8 @@ void AnalysisRegistry::createFreshAnalyses(){
         Analyses.emplace_back(std::make_unique<ConcurrencySupportLibraryAnalysis>());
     if(Options.EnabledAnalyses.contains("cslma"))
         Analyses.emplace_back(std::make_unique<ConcurrencySupportLibraryMethodAnalysis>());
+    if(Options.EnabledAnalyses.contains("dca"))
+        Analyses.emplace_back(std::make_unique<DataContainerAnalysis>());
     if(Options.EnabledAnalyses.contains("sa"))
         Analyses.emplace_back(std::make_unique<ScopeAnalysis>());
     if(Options.EnabledAnalyses.contains("fpa"))

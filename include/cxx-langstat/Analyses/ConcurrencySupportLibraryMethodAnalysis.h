@@ -9,9 +9,6 @@
 class ConcurrencySupportLibraryMethodAnalysis : public ClassMethodCallAnalysis {
 public:
     ConcurrencySupportLibraryMethodAnalysis();
-    ~ConcurrencySupportLibraryMethodAnalysis(){
-        // std::cout << "CSLMA dtor\n";
-    }
     std::string getShorthand() override {
         return ShorthandName;
     }
