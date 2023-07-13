@@ -41,7 +41,9 @@ void DataContainerAnalysis::analyzeFeatures() {
     ordered_json js;
 
     for (auto match : methodcalls_) {
-        std::string callee_type = match.Node->getObjectType().getAsString(pp_);
+        std::string callee_type;
+        llvm::raw_string_ostream rso(callee_type);
+        match.Node->getRecordDecl()->printQualifiedName(rso, pp_);
         std::string called_func = match.Node->getMethodDecl()->getNameAsString();
         unsigned line_num = Context->getSourceManager().getSpellingLineNumber(match.Node->getExprLoc());
         auto persumed_loc = Context->getSourceManager().getPresumedLoc(match.Node->getExprLoc());
@@ -49,8 +51,6 @@ void DataContainerAnalysis::analyzeFeatures() {
 
         if(isDependentHeader(file_name))
             continue;
-
-        callee_type = removeTemplateArgs(callee_type);
 
         ordered_json j;
         j[method_name_key_] = called_func;
@@ -60,7 +60,9 @@ void DataContainerAnalysis::analyzeFeatures() {
     }
 
     for (auto match : operatorcalls) {
-        std::string callee_type = match.Node->getArg(0)->getType().getAsString(pp_); // should always have at least one arg       
+        std::string callee_type;
+        llvm::raw_string_ostream rso(callee_type);
+        match.Node->getArg(0)->getBestDynamicClassType()->printQualifiedName(rso, pp_); // should always have at least one arg     
         unsigned line_num = Context->getSourceManager().getSpellingLineNumber(match.Node->getExprLoc());
         auto persumed_loc = Context->getSourceManager().getPresumedLoc(match.Node->getExprLoc());
         const char* file_name = persumed_loc.getFilename();
@@ -68,7 +70,6 @@ void DataContainerAnalysis::analyzeFeatures() {
         if (isDependentHeader(file_name))
             continue;
 
-        callee_type = removeTemplateArgs(callee_type);
         if (callee_type.find("std::") == std::string::npos
             && callee_type.find("tbb::") == std::string::npos
             && callee_type.find("concurrency::") == std::string::npos) {

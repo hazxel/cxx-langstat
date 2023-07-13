@@ -11,7 +11,7 @@ class DataContainerAnalysis : public Analysis {
 public:
     DataContainerAnalysis() : lo_(), pp_(lo_) {
         pp_.PrintCanonicalTypes = true;
-        pp_.SuppressTagKeyword = false;
+        pp_.SuppressTagKeyword = true;
         pp_.SuppressScope = false;
         pp_.SuppressUnwrittenScope = true;
         pp_.FullyQualifiedName = true;
