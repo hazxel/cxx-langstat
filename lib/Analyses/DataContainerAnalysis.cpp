@@ -42,13 +42,15 @@ void DataContainerAnalysis::analyzeFeatures() {
 
     for (auto match : methodcalls_) {
         std::string callee_type = match.Node->getObjectType().getAsString(pp_);
-        std::string called_func = match.Node->getMethodDecl()->getQualifiedNameAsString();
+        std::string called_func = match.Node->getMethodDecl()->getNameAsString();
         unsigned line_num = Context->getSourceManager().getSpellingLineNumber(match.Node->getExprLoc());
         auto persumed_loc = Context->getSourceManager().getPresumedLoc(match.Node->getExprLoc());
         const char* file_name = persumed_loc.getFilename();
 
         if(isDependentHeader(file_name))
             continue;
+
+        callee_type = removeTemplateArgs(callee_type);
 
         ordered_json j;
         j[method_name_key_] = called_func;
@@ -66,6 +68,7 @@ void DataContainerAnalysis::analyzeFeatures() {
         if (isDependentHeader(file_name))
             continue;
 
+        callee_type = removeTemplateArgs(callee_type);
         if (callee_type.find("std::") == std::string::npos
             && callee_type.find("tbb::") == std::string::npos
             && callee_type.find("concurrency::") == std::string::npos) {

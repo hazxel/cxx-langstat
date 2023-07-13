@@ -123,6 +123,12 @@ bool inline isDependentHeader(const std::string& fileName){
         || fileName.find("homebrew") != std::string::npos;
 }
 
-//-----------------------------------------------------------------------------
+inline std::string removeTemplateArgs(const std::string& type) {
+    auto pos = type.find('<');
+    if (pos != std::string::npos) {
+        return type.substr(0, pos);
+    }
+    return type;
+}
 
 #endif // UTILS_H

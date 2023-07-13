@@ -64,14 +64,6 @@ private:
         return false;
     }
 
-    inline std::string removeTemplateArgs(std::string type) {
-        auto pos = type.find('<');
-        if (pos != std::string::npos) {
-            type = type.substr(0, pos);
-        }
-        return type;
-    }
-
 private:
     clang::LangOptions lo_;
     clang::PrintingPolicy pp_;
