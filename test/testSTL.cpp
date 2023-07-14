@@ -3,6 +3,7 @@
 #include <vector>
 #include <atomic>
 #include <mutex>
+#include <string>
  
 int main()
 {
@@ -39,4 +40,7 @@ int main()
             v[0] = 1;
         }
     }
+    std::string s;
+    s.append("a");
+    s[0] = 'b';
 }
