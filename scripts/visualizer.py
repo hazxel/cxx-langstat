@@ -15,7 +15,6 @@ thread_usage = {}
 parallel_usage = {}
 lock_mutex_usage = {}
 atomic_usage = {}
-# atomic_memroy_order = {}
 atomic_memroy_order_function_usage = {}
 
 std_lib_usage = {}
@@ -31,6 +30,7 @@ cuda_lib_usage = {}
 project_lib_usage = {}
 
 container_usage = {}
+container_lock_mutex_usage = {}
 
 
 analysis = "cslma"
@@ -39,7 +39,6 @@ for filename in os.listdir(prefix + '/' + analysis):
         continue
 
     projectname = filename.split('.')[0]
-    print("Processing " + projectname + " with " + analysis + "...")
     project_lib_usage[projectname] = project_lib_usage.get(projectname, {})
 
     f = open(prefix + '/' + analysis + '/' + filename, 'r')
@@ -100,7 +99,7 @@ for filename in os.listdir(prefix + '/' + analysis):
         elif "tbb::" in instance_name:
             lib_usage["TBB"] = lib_usage.get("TBB", 0) + sum
             project_lib_usage[projectname]["TBB"] = project_lib_usage[projectname].get("TBB", 0) + sum
-            if "mutex" in instance_name:
+            if "mutex" in instance_name or "lock" in instance_name:
                 lock_mutex_usage["TBB"] = lock_mutex_usage.get("TBB", 0) + sum
                 tbb_lib_usage["mutex&lock"] = tbb_lib_usage.get("mutex&lock", 0) + sum
             elif "task" in instance_name:
@@ -131,6 +130,7 @@ for filename in os.listdir(prefix + '/' + analysis):
         elif "MPI_" in function_name:
             lib_usage["MPI"] = lib_usage.get("MPI", 0) + calls
             project_lib_usage[projectname]["MPI"] = project_lib_usage[projectname].get("MPI", 0) + calls
+            mpi_lib_usage[function_name] = mpi_lib_usage.get(function_name, 0) + calls
         elif "omp_" in function_name:
             lib_usage["OpenMP"] = lib_usage.get("OpenMP", 0) + calls
             project_lib_usage[projectname]["OpenMP"] = project_lib_usage[projectname].get("OpenMP", 0) + calls
@@ -186,11 +186,14 @@ for filename in os.listdir(prefix + '/' + analysis):
     if not filename.endswith(".json"):
         continue
 
-    projectname = filename.split('.')[0]
-    project_lib_usage[projectname] = project_lib_usage.get(projectname, {})
-
     f = open(prefix + '/' + analysis + '/' + filename, 'r')
     data = json.load(f)
+
+    if data["Summary"]["omp_directive"] == {}:
+        continue
+
+    projectname = filename.split('.')[0]
+    project_lib_usage[projectname] = project_lib_usage.get(projectname, {})
 
     for ompdir_name, calls in data["Summary"]["omp_directive"].items():
         if "Parallel" in ompdir_name or "For" in ompdir_name:
@@ -206,12 +209,7 @@ for filename in os.listdir(prefix + '/' + analysis):
             continue
         lib_usage["OpenMP"] = lib_usage.get("OpenMP", 0) + calls
         project_lib_usage[projectname]["OpenMP"] = project_lib_usage[projectname].get("OpenMP", 0) + calls
-
     f.close()
-
-keys = list(project_lib_usage.keys())
-keys.sort(reverse=True)
-project_lib_usage = {k: project_lib_usage[k] for k in keys}
 
 analysis = "amoa"
 for filename in os.listdir(prefix + '/' + analysis):
@@ -219,8 +217,6 @@ for filename in os.listdir(prefix + '/' + analysis):
         continue
 
     projectname = filename.split('.')[0]
-    project_lib_usage[projectname] = project_lib_usage.get(projectname, {})
-
     f = open(prefix + '/' + analysis + '/' + filename, 'r')
     data = json.load(f)
 
@@ -229,140 +225,126 @@ for filename in os.listdir(prefix + '/' + analysis):
         for memory_order, count in memory_order_count_dict.items():
             memory_order = memory_order.replace("std::memory_order_", "")
             atomic_memroy_order_function_usage[function_name][memory_order] = atomic_memroy_order_function_usage[function_name].get(memory_order, 0) + count
-#         if memory_order.startswith("std::memory_order_"):
-#             memory_order = memory_order[len("std::memory_order_"):]
-#             if memory_order.find("std::memory_order_") != -1:
-#                 mo1 = memory_order[0:memory_order.find("std::memory_order_")]
-#                 atomic_memroy_order[mo1] = atomic_memroy_order.get(mo1, 0) + calls
-#                 memory_order = memory_order[memory_order.find("std::memory_order_") + len("std::memory_order_"):]
-#         atomic_memroy_order[memory_order] = atomic_memroy_order.get(memory_order, 0) + calls
-# keys = list(atomic_memroy_order.keys())
-# keys.sort(reverse=True)
-# atomic_memroy_order = {k: atomic_memroy_order[k] for k in keys}
+    f.close()
 
-
-# container lib usage
-analysis = "cla"
+analysis = "dca"
 for filename in os.listdir(prefix + '/' + analysis):
     if not filename.endswith(".json"):
         continue
+    projectname= filename.split('.')[0]
+    f = open(prefix + '/' + analysis + '/' + filename, 'r')
+    data = json.load(f)
+    for container_name, method_calls in data["Summary"]["container_usage"].items():
+        for method_name, calls in method_calls.items():
+            container_usage[container_name] = container_usage.get(container_name, 0) + calls
+    f.close()
 
+analysis = "smsa"
+set_of_containers = set()
+for filename in os.listdir(prefix + '/' + analysis):
+    if not filename.endswith(".json"):
+        continue
     projectname= filename.split('.')[0]
     f = open(prefix + '/' + analysis + '/' + filename, 'r')
     data = json.load(f)
 
-    for container_name, calls in data["Summary"]["container type prevalence"].items():
-        container_usage[container_name] = container_usage.get(container_name, 0) + calls
-        
-    f.close() 
+    for mutex_lock_type, features in data["Summary"]["scope"].items():
+        if "std::" in mutex_lock_type:
+            if "lock_guard" in mutex_lock_type:
+                mutex_lock_type = "std::lock_guard"
+            if "unique_lock" in mutex_lock_type:
+                mutex_lock_type = "std::unique_lock"
+            if "shared_lock" in mutex_lock_type:
+                mutex_lock_type = "std::shared_lock"
+            if "scoped_lock" in mutex_lock_type:
+                mutex_lock_type = "std::scoped_lock"
+        container_lock_mutex_usage[mutex_lock_type] = container_lock_mutex_usage.get(mutex_lock_type, {})
+        # not deal with function calls
+        if "member_method_features" not in features:
+            continue
+        for container_type_name, method_calls in features["member_method_features"].items():
+            if "std::" in container_type_name:
+                if "vector" in container_type_name:
+                    container_type_name = "std::vector"
+                elif "forward_list" in container_type_name:
+                    container_type_name = "std::forward_list"
+                elif "list" in container_type_name:
+                    container_type_name = "std::list"
+                elif "unordered_map" in container_type_name:
+                    container_type_name = "std::unordered_map"
+                elif "map" in container_type_name:
+                    container_type_name = "std::map"
+                elif "unordered_set" in container_type_name:
+                    container_type_name = "std::unordered_set"
+                elif "set" in container_type_name:
+                    container_type_name = "std::set"
+                elif "deque" in container_type_name:
+                    container_type_name = "std::deque"
+                elif "priority_queue" in container_type_name:
+                    container_type_name = "std::priority_queue"
+                elif "queue" in container_type_name:
+                    container_type_name = "std::queue"
+                elif "stack" in container_type_name:
+                    container_type_name = "std::stack"
+
+            set_of_containers.add(container_type_name)
+            calls = 0
+            for method_name, count in method_calls.items():
+                calls += count
+            container_lock_mutex_usage[mutex_lock_type][container_type_name] = container_lock_mutex_usage[mutex_lock_type].get(container_type_name, 0) + calls
+    f.close()
+
+
+########
+# plot #
+########
 
 
 colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']
+def plot_feature(
+        feature_usage_dict, 
+        fig_name,
+        x_label_name = "total calls",
+        y_label_name = ""):
+    num_rows = len(feature_usage_dict)
+    height = max(0.4, num_rows*0.6 + 2)
+    plt.figure(figsize = (10, height))
+    plt.ylim(bottom = -0.5, top = len(feature_usage_dict) - 0.5)
+    plt.barh(list(feature_usage_dict.keys()), list(feature_usage_dict.values()), height=0.35, align='center', color='maroon')
+    plt.xticks(fontsize = 12)
+    plt.yticks(fontsize = 14)
+    plt.xlabel(x_label_name, fontsize=16)
+    plt.ylabel(y_label_name, fontsize=16)
+    
+    plt.tight_layout()
+    plt.savefig(prefix + '/' + fig_name)
+    plt.close()
 
+plot_feature(lib_usage, "lib.png")
+plot_feature(thread_usage, "thread.png")
+plot_feature(lock_mutex_usage, "lock_mutex.png")
+plot_feature(parallel_usage, "parallel.png")
+plot_feature(atomic_usage, "atomic.png")
 
-# statistics for each concurrency feature
-plt.figure(figsize = (10, 5))
-plt.barh(list(lib_usage.keys()), list(lib_usage.values()), height=0.4, align='center', color='maroon')
-plt.title("lib usage")
-plt.xlabel("total calls")
-plt.ylabel("libraries")
-plt.savefig(prefix + '/lib.png')
-plt.close()
+plot_feature(std_lib_usage, "std_lib.png", y_label_name = "primitives")
+plot_feature(tbb_lib_usage, "tbb_lib.png", y_label_name = "primitives")
+plot_feature(openmp_lib_usage, "omp_lib.png", y_label_name = "primitives")
+plot_feature(pthread_lib_usage, "pthread_lib.png", y_label_name = "primitives")
+plot_feature(mpi_lib_usage, "mpi_lib.png", y_label_name = "primitives")
+plot_feature(kokkos_lib_usage, "kokkos_lib.png", y_label_name = "primitives")
+plot_feature(raja_lib_usage, "raja_lib.png", y_label_name = "primitives")
+plot_feature(container_usage, "container.png", y_label_name = "container type")
 
-plt.figure(figsize = (10, 5))
-plt.barh(list(thread_usage.keys()), list(thread_usage.values()), height=0.4, align='center', color='maroon')
-plt.title("thread usage")
-plt.xlabel("total calls")
-plt.ylabel("libraries")
-plt.savefig(prefix + '/thread.png')
-plt.close()
-
-plt.figure(figsize = (10, 5))
-plt.barh(list(lock_mutex_usage.keys()), list(lock_mutex_usage.values()), height=0.4, align='center', color='maroon')
-plt.title("lock/mutex usage")
-plt.xlabel("total calls")
-plt.ylabel("libraries")
-plt.savefig(prefix + '/lock_mutex.png')
-plt.close()
-
-plt.figure(figsize = (10, 5))
-plt.barh(list(parallel_usage.keys()), list(parallel_usage.values()), height=0.4, align='center', color='maroon')
-plt.title("parallel execution usage")
-plt.xlabel("total calls")
-plt.ylabel("libraries")
-plt.savefig(prefix + '/parallel.png')
-plt.close()
-
-plt.figure(figsize = (10, 5))
-plt.barh(list(atomic_usage.keys()), list(atomic_usage.values()), height=0.4, align='center', color='maroon')
-plt.title("atomic usage")
-plt.xlabel("total calls")
-plt.ylabel("libraries")
-plt.savefig(prefix + '/atomic.png')
-plt.close()
-
-
-# statistics for each framework/library
-plt.figure(figsize = (10, 5))
-plt.barh(list(std_lib_usage.keys()), list(std_lib_usage.values()), height=0.4, align='center', color='maroon')
-plt.title("STL usage")
-plt.xlabel("total calls")
-plt.ylabel("usage")
-plt.savefig(prefix + '/std_lib.png')
-plt.close()
-
-plt.figure(figsize = (10, 5))
-plt.barh(list(tbb_lib_usage.keys()), list(tbb_lib_usage.values()), height=0.4, align='center', color='maroon')
-plt.title("TBB lib usage")
-plt.xlabel("total calls")
-plt.ylabel("usage")
-plt.savefig(prefix + '/tbb_lib.png')
-plt.close()
-
-plt.figure(figsize = (10, 5))
-plt.barh(list(openmp_lib_usage.keys()), list(openmp_lib_usage.values()), height=0.4, align='center', color='maroon')
-plt.title("OpenMP lib usage")
-plt.xlabel("total calls")
-plt.ylabel("usage")
-plt.savefig(prefix + '/omp_lib.png')
-plt.close()
-
-plt.figure(figsize = (10, 5))
-plt.barh(list(pthread_lib_usage.keys()), list(pthread_lib_usage.values()), height=0.4, align='center', color='maroon')
-plt.title("pthread lib usage")
-plt.xlabel("total calls")
-plt.ylabel("usage")
-plt.savefig(prefix + '/pthread_lib.png')
-plt.close()
-
-plt.figure(figsize = (10, 5))
-plt.barh(list(mpi_lib_usage.keys()), list(mpi_lib_usage.values()), height=0.4, align='center', color='maroon')
-plt.title("MPI lib usage")
-plt.xlabel("total calls")
-plt.ylabel("usage")
-plt.savefig(prefix + '/mpi_lib.png')
-plt.close()
-
-plt.figure(figsize = (10, 5))
-plt.barh(list(kokkos_lib_usage.keys()), list(kokkos_lib_usage.values()), height=0.4, align='center', color='maroon')
-plt.title("kokkos lib usage")
-plt.xlabel("total calls")
-plt.ylabel("usage")
-# plt.show()
-plt.savefig(prefix + '/kokkos_lib.png')
-
-plt.figure(figsize = (10, 5))
-plt.barh(list(raja_lib_usage.keys()), list(raja_lib_usage.values()), height=0.4, align='center', color='maroon')
-plt.title("RAJA lib usage")
-plt.xlabel("total calls")
-plt.ylabel("usage")
-plt.savefig(prefix + '/raja_lib.png')
-plt.close()
-
+# statistics for atomic memory order
+for function_name, memory_order_count_dict in atomic_memroy_order_function_usage.items():
+    plot_feature(memory_order_count_dict, "atomic_memory_order_" + function_name + ".png", x_label_name = "total usage", y_label_name = "memory order")
 
 # statistics for all the projects
-plt.figure(figsize = (12, 5))
+plt.figure(figsize = (15, 11))
 set_of_libs = set()
+keys = list(project_lib_usage.keys())
+keys.sort(reverse=True)
+project_lib_usage = {k: project_lib_usage[k] for k in keys}
 for lib_usage in project_lib_usage.values():
     for lib in lib_usage.keys():
         set_of_libs.add(lib)
@@ -370,40 +352,39 @@ base=[0] * len(project_lib_usage)
 for lib in set_of_libs:
     cur_bar = [lib_usage.get(lib, 0) for lib_usage in project_lib_usage.values()]
     random.shuffle(colors)
-    plt.barh(list(project_lib_usage.keys()), cur_bar, height=0.4, align='center', left=base, color = colors.pop())
+    plt.barh(list(project_lib_usage.keys()), cur_bar, height=0.5, align='center', left=base)
     base = [base[i] + cur_bar[i] for i in range(len(base))] 
-plt.title("concurrency support libraries usage of HPC projects")
-plt.xlabel("total number of calls")
-plt.ylabel("project name")
-plt.legend(set_of_libs)
+# plt.title("concurrency support libraries usage of HPC projects")
+plt.xticks(fontsize = 16)
+plt.xlabel("total calls", fontsize=18)
+plt.yticks(fontsize = 18)
+plt.legend(set_of_libs, fontsize=16)
 plt.savefig(prefix + '/project_lib.png')
 plt.close()
 
-
-# statistics for container prevalence
-plt.figure(figsize = (15, 5))
-plt.barh(list(container_usage.keys()), list(container_usage.values()), height=0.4, align='center', color='maroon')
-plt.title("container usage")
+# statistics for mutex lock prevalence in container usage
+### in what percentage of each STL container usage, STL/boost/tbb/pthread/openmp mutex lock are used?
+plt.figure(figsize = (12, 5))
+base = [0] * len(set_of_containers)
+for lock_type in container_lock_mutex_usage.keys():
+    cur_bar = [container_lock_mutex_usage[lock_type].get(container_name, 0) for container_name in set_of_containers]
+    random.shuffle(colors)
+    plt.barh(list(set_of_containers), cur_bar, height=0.4, align='center', left=base)
+    base = [base[i] + cur_bar[i] for i in range(len(base))]
+# plt.title("mutex lock usage in containers")
 plt.xlabel("total calls")
-plt.ylabel("container type")
-plt.savefig(prefix + '/container.png')
+plt.ylabel("container name")
+plt.legend(container_lock_mutex_usage.keys())
+plt.savefig(prefix + '/container_lock.png')
 plt.close()
 
-
-# statistics for atomic memory order
-# plt.figure(figsize = (10, 5))
-# plt.barh(list(atomic_memroy_order.keys()), list(atomic_memroy_order.values()), height=0.4, align='center', color='maroon')
-# plt.title("atomic memory order")
-# plt.xlabel("total usage")
-# plt.ylabel("memory order")
-# # plt.show()
-# plt.savefig(prefix + '/atomic_memory_order.png')
-
-for function_name, memory_order_count_dict in atomic_memroy_order_function_usage.items():
-    plt.figure(figsize = (10, 5))
-    plt.barh(list(memory_order_count_dict.keys()), list(memory_order_count_dict.values()), height=0.4, align='center', color='maroon')
-    plt.title("atomic memory order usage of " + function_name)
-    plt.xlabel("total usage")
-    plt.ylabel("memory order")
-    plt.savefig(prefix + '/atomic_memory_order_' + function_name + '.png')
-    plt.close()
+# how many containers are protected by mutex lock in percentage?
+plt.figure(figsize = (12, 5))
+total_calls = [container_usage.get(container_name, 0) for container_name in set_of_containers] 
+percentage = [base[i] * 100 / total_calls[i] for i in range(len(base))]
+plt.bar(list(set_of_containers), percentage, width=0.4, align='center', color='maroon')
+# plt.title("percentage of containers protected by mutex/lock")
+plt.xlabel("container name")
+plt.ylabel("percentage(%)")
+plt.savefig(prefix + '/container_lock_percentage.png')
+plt.close()
