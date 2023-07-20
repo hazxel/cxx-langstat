@@ -126,6 +126,7 @@ bool inline isDependentHeader(const std::string& fileName){
         || fileName.find("thirdparty") != std::string::npos
         || fileName.find("third_party") != std::string::npos
         || fileName.find("third-party") != std::string::npos
+        || fileName.find("thirdParty") != std::string::npos
         || fileName.find("googletest") != std::string::npos;
 }
 
