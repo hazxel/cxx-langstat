@@ -62,12 +62,66 @@ void ScopeAnalysis::analyzeFeatures(){
     const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::OMPCriticalDirective> ompCriticalDirective;
     auto ompCriticalMatcher = ompCriticalDirective(hasStructuredBlock(stmt())).bind("OMPCriticalBlock");
     auto ompCriticalDirs = getASTNodes<OMPCriticalDirective>(Extractor.extract2(*Context, ompCriticalMatcher), "OMPCriticalBlock");
-
     visitor.setInstanceName("#pragma omp critical");
     for (auto ompDir : ompCriticalDirs) {
         visitor.disableInstanceCheck();
         visitor.TraverseStmt(const_cast<clang::Stmt*>(ompDir.Node->getStructuredBlock()));
     }
+
+    const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::OMPAtomicDirective> ompAtomicDirective;
+    auto ompAtomicMatcher = ompAtomicDirective(hasStructuredBlock(stmt())).bind("OMPAtomicBlock");
+    auto ompAtomicDirs = getASTNodes<OMPAtomicDirective>(Extractor.extract2(*Context, ompAtomicMatcher), "OMPAtomicBlock");
+    visitor.setInstanceName("#pragma omp atomic");
+    for (auto ompDir : ompAtomicDirs) {
+        visitor.disableInstanceCheck();
+        visitor.TraverseStmt(const_cast<clang::Stmt*>(ompDir.Node->getStructuredBlock()));
+    }
+
+    const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::OMPBarrierDirective> ompBarrierDirective;
+    auto ompBarrierMatcher = ompBarrierDirective().bind("OMPBarrier");
+    auto ompBarrierDirs = getASTNodes<OMPBarrierDirective>(Extractor.extract2(*Context, ompBarrierMatcher), "OMPBarrier");
+    visitor.setInstanceName("#pragma omp barrier");
+    for (auto ompDir : ompBarrierDirs) {
+        visitor.disableInstanceCheck();
+        visitor.TraverseStmt(const_cast<clang::Stmt*>(ompDir.Node->getStructuredBlock()));
+    }
+
+    const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::OMPTaskwaitDirective> ompTaskwaitDirective;    
+    auto ompTaskwaitMatcher = ompTaskwaitDirective().bind("OMPTaskwait");
+    auto ompTaskwaitDirs = getASTNodes<OMPTaskwaitDirective>(Extractor.extract2(*Context, ompTaskwaitMatcher), "OMPTaskwait");
+    visitor.setInstanceName("#pragma omp taskwait");
+    for (auto ompDir : ompTaskwaitDirs) {
+        visitor.disableInstanceCheck();
+        visitor.TraverseStmt(const_cast<clang::Stmt*>(ompDir.Node->getStructuredBlock()));
+    }
+
+    const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::OMPMasterDirective> ompMasterDirective;
+    auto ompMasterMatcher = ompMasterDirective(hasStructuredBlock(stmt())).bind("OMPMaster");
+    auto ompMasterDirs = getASTNodes<OMPMasterDirective>(Extractor.extract2(*Context, ompMasterMatcher), "OMPMaster");
+    visitor.setInstanceName("#pragma omp master");
+    for (auto ompDir : ompMasterDirs) {
+        visitor.disableInstanceCheck();
+        visitor.TraverseStmt(const_cast<clang::Stmt*>(ompDir.Node->getStructuredBlock()));
+    }
+
+    const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::OMPSingleDirective> ompSingleDirective;
+    auto ompSingleMatcher = ompSingleDirective(hasStructuredBlock(stmt())).bind("OMPSingle");
+    auto ompSingleDirs = getASTNodes<OMPSingleDirective>(Extractor.extract2(*Context, ompSingleMatcher), "OMPSingle");
+    visitor.setInstanceName("#pragma omp single");
+    for (auto ompDir : ompSingleDirs) {
+        visitor.disableInstanceCheck();
+        visitor.TraverseStmt(const_cast<clang::Stmt*>(ompDir.Node->getStructuredBlock()));
+    }
+
+    const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::OMPOrderedDirective> ompOrderedDirective;
+    auto ompOrderedMatcher = ompOrderedDirective(hasStructuredBlock(stmt())).bind("OMPOrdered");
+    auto ompOrderedDirs = getASTNodes<OMPOrderedDirective>(Extractor.extract2(*Context, ompOrderedMatcher), "OMPOrdered");
+    visitor.setInstanceName("#pragma omp ordered");
+    for (auto ompDir : ompOrderedDirs) {
+        visitor.disableInstanceCheck();
+        visitor.TraverseStmt(const_cast<clang::Stmt*>(ompDir.Node->getStructuredBlock()));
+    }
+
 
 
     // pthread mutex lock
