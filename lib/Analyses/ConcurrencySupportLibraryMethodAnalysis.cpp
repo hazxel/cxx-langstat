@@ -109,7 +109,7 @@ ConcurrencySupportLibraryMethodAnalysis::ConcurrencySupportLibraryMethodAnalysis
         "cl::sycl::access::target::image", "cl::sycl::access::target::image_array"
     ),
     // libc++:
-    "thread|atomic|mutex|shared_mutex|conditional_variable|future|algo.h|numeric|"
+    "thread|atomic|mutex|shared_mutex|conditional_variable|future|algo.h|numeric|latch|barrier|"
     // libstdc++
     // "bits/std_thread.h|std/atomic|bits/std_mutex.h|std/shared_mutex|std/condition_variable|std/future|std/parallel/algo.h|"
     // pthreads
