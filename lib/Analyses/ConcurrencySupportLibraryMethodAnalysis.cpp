@@ -62,7 +62,9 @@ ConcurrencySupportLibraryMethodAnalysis::ConcurrencySupportLibraryMethodAnalysis
         // TBB
         "tbb::task_scheduler_init", "tbb::task_group", "tbb::parallel_for", "tbb::parallel_for_each",
         "tbb::parallel_invoke", "tbb::parallel_reduce", "tbb::parallel_scan", "tbb::parallel_sort",
-        "tbb::parallel_pipeline", "tbb::task", "tbb::mutex::scoped_lock", "tbb::mutex", "tbb::spin_mutex",
+        "tbb::parallel_pipeline", "tbb::task", 
+        "tbb::mutex::scoped_lock", "tbb::recursive_mutex::scoped_lock", "tbb::queuing_mutex::scoped_lock", "tbb::queuing_rw_mutex::scoped_lock", "tbb::spin_mutex::scoped_lock", "tbb::spin_rw_mutex::scoped_lock", "tbb::null_mutex::scoped_lock", "tbb::null_rw_mutex::scoped_lock", "tbb::speculative_spin_mutex::scoped_lock", "tbb::speculative_spin_rw_mutex::scoped_lock", "tbb::spin_rw_mutex::scoped_lock", "tbb::rw_mutex::scoped_lock",
+        "tbb::mutex", "tbb::recursive_mutex", "tbb::spin_mutex", "tbb::queuing_mutex", "tbb::queuing_rw_mutex", "tbb::spin_rw_mutex", "tbb::null_mutex", "tbb::null_rw_mutex", "tbb::speculative_spin_mutex", "tbb::speculative_spin_rw_mutex", "tbb::spin_rw_mutex", "tbb::rw_mutex",
         
         // Boost
         "boost::thread", "boost::thread_group", "boost::thread_specific_ptr",
@@ -121,7 +123,8 @@ ConcurrencySupportLibraryMethodAnalysis::ConcurrencySupportLibraryMethodAnalysis
     // TBB
     "tbb/task_scheduler_init.h|tbb/task_group.h|tbb/parallel_for.h|tbb/parallel_for_each.h|"
     "tbb/parallel_invoke.h|tbb/parallel_reduce.h|tbb/parallel_scan.h|tbb/parallel_sort.h|"
-    "tbb/parallel_pipeline.h|tbb/task.h|tbb/mutex.h|tbb/spin_mutex.h|"
+    "tbb/parallel_pipeline.h|tbb/task.h|"
+    "tbb/mutex.h|tbb/recursive_mutex.h|tbb/spin_mutex.h|tbb/queuing_mutex.h|tbb/spin_rw_mutex.h|tbb/null_mutex.h|tbb/null_rw_mutex.h|tbb/speculative_spin_mutex.h|tbb/speculative_spin_rw_mutex.h|tbb/spin_rw_mutex.h|tbb/rw_mutex.h|"
     // Boost
     "boost/thread.hpp|boost/thread/group.hpp|boost/thread/tss.hpp|boost/thread/mutex.hpp|"
     "boost/thread/recursive_mutex.hpp|boost/thread/shared_mutex.hpp|boost/thread/lock_guard.hpp|"
