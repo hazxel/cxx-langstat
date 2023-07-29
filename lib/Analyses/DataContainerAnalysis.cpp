@@ -11,13 +11,40 @@
     "std::map", "std::multimap", "std::unordered_map", "std::unordered_multimap", \
     "std::stack", "std::queue", "std::priority_queue" \
     "tbb::concurrent_vector", "tbb::concurrent_unordered_map", "tbb::concurrent_unordered_set", "tbb::concurrent_queue", \
-    "concurrency::concurrent_vector", "concurrency::concurrent_queue", "concurrency::concurrent_stack", \
-    "concurrency::concurrent_unordered_map", "concurrency::concurrent_unordered_multimap"
+    "concurrency::concurrent_vector", "concurrency::concurrent_queue", "concurrency::concurrent_stack", \ 
+    "concurrency::concurrent_unordered_map", "concurrency::concurrent_unordered_multimap"\
+    "boost::array", "boost::circular_buffer", "boost::container::flat_map", "boost::container::flat_set", \
+    "boost::container::list", "boost::container::map", "boost::container::set", "boost::container::slist", \
+    "boost::container::stable_vector", "boost::container::static_vector", "boost::container::vector", \
+    "boost::heap::binomial_heap", "boost::heap::binomial_heap", "boost::heap::d_ary_heap", \
+    "boost::heap::fibonacci_heap", "boost::heap::fibonacci_heap", "boost::heap::pairing_heap", \
+    "boost::heap::pairing_heap", "boost::heap::skew_heap", "boost::heap::skew_heap", \
+    "boost::heap::priority_queue", "boost::heap::priority_queue", "boost::heap::priority_queue", \
+    "boost::lockfree::queue", "boost::lockfree::stack", "boost::lockfree::spsc_queue", \
+    "absl::btree_map", "absl::btree_multimap", "absl::btree_multiset", "absl::btree_set", \
+    "absl::flat_hash_map", "absl::flat_hash_set", "absl::flat_hash_set", "absl::flat_hash_set", \
+    "absl::flat_hash_set", "absl::flat_hash_set", "absl::flat_hash_set", "absl::flat_hash_set", \
+    "absl::flat_hash_set", "absl::flat_hash_set", "absl::flat_hash_set", "absl::flat_hash_set", \
+    "folly::AtomicHashMap", "folly::AtomicHashArray", "folly::AtomicLinkedList", "folly::AtomicUnorderedMap"
+
+
+
 
 #define CONTAINER_HEADERS \
     "vector|list|forward_list|array|map|set|unordered_map|unordered_set|queue|deque|priority_queue|stack|"\
     "tbb/concurrent_vector.h|tbb/concurrent_unordered_map.h|tbb/concurrent_unordered_set.h|tbb/concurrent_queue.h|"\
-    "concurrent_vector.h|concurrent_queue.h|concurrent_stack.h|concurrent_unordered_map.h|concurrent_unordered_multimap.h"
+    "concurrent_vector.h|concurrent_queue.h|concurrent_stack.h|concurrent_unordered_map.h|concurrent_unordered_multimap.h|"\
+    "boost/array.hpp|boost/circular_buffer.hpp|boost/container/flat_map.hpp|boost/container/flat_set.hpp|"\
+    "boost/container/list.hpp|boost/container/map.hpp|boost/container/set.hpp|boost/container/slist.hpp|"\
+    "boost/container/stable_vector.hpp|boost/container/static_vector.hpp|boost/container/vector.hpp|"\
+    "boost/heap/binomial_heap.hpp|boost/heap/binomial_heap.hpp|boost/heap/d_ary_heap.hpp|boost/heap/fibonacci_heap.hpp|"\
+    "boost/heap/fibonacci_heap.hpp|boost/heap/pairing_heap.hpp|boost/heap/pairing_heap.hpp|boost/heap/skew_heap.hpp|"\
+    "boost/heap/skew_heap.hpp|boost/heap/priority_queue.hpp|boost/heap/priority_queue.hpp|boost/heap/priority_queue.hpp|"\
+    "boost/lockfree/queue.hpp|boost/lockfree/stack.hpp|boost/lockfree/spsc_queue.hpp|"\
+    "absl/container/btree_map.h|absl/container/btree_multimap.h|absl/container/btree_multiset.h|absl/container/btree_set.h|"\
+    "absl/container/flat_hash_map.h|absl/container/flat_hash_set.h|absl/container/flat_hash_set.h|absl/container/flat_hash_set.h|"\
+    "absl/container/flat_hash_set.h|absl/container/flat_hash_set.h|absl/container/flat_hash_set.h|absl/container/flat_hash_set.h|"\
+    "folly/AtomicHashMap.h|folly/AtomicHashArray.h|folly/AtomicLinkedList.h|folly/AtomicUnorderedMap.h"
 
 using namespace clang;
 using namespace clang::ast_matchers;
