@@ -28,6 +28,9 @@ void AtomicMemoryOrderAnalysis::analyzeFeatures(){
     // auto atomic_operator_matcher = cxxOperatorCallExpr(on(hasType(cxxRecordDecl(atomic_instance_names_, isExpansionInFileMatching(atomic_header_file_names_))))).bind("AtomicOperatorCall");
     // auto atomic_operator_calls_ = getASTNodes<CXXOperatorCallExpr>(Extractor.extract2(*Context, atomic_operator_matcher), "AtomicOperatorCall");
 
+    auto atomic_function_matcher = callExpr(callee(functionDecl(atomic_func_names_, isExpansionInFileMatching(atomic_header_file_names_)))).bind("AtomicFunctionCall");
+    atomic_function_calls_ = getASTNodes<CallExpr>(Extractor.extract2(*Context, atomic_function_matcher), "AtomicFunctionCall");
+
     ordered_json js;
 
     for (auto match : atomic_calls_) {
@@ -67,6 +70,52 @@ void AtomicMemoryOrderAnalysis::analyzeFeatures(){
         j[file_name_key_] = file_name;
         j[memory_order_list_key_] = memory_order_args;
         js[called_func].emplace_back(j);
+    }
+
+    for (auto match : atomic_function_calls_) {
+        auto callee = match.Node->getDirectCallee();
+        if (callee == nullptr) {
+            continue;
+        }
+
+        unsigned num_args = match.Node->getNumArgs();
+
+        std::string printedStmt;
+        llvm::raw_string_ostream stream(printedStmt);
+        std::vector<string> memory_order_args;
+
+        for (int i = 0; i < num_args; i++) {
+            auto model = match.Node->getArg(i)->getExprStmt();
+            if (model->getType().getAsString().find("memory_order") != std::string::npos) {
+                model->printPretty(stream, nullptr, PrintingPolicy(LangOptions()));
+                string memory_order_arg = stream.str();
+                printedStmt.clear(); // strange
+                if (memory_order_arg.length() == 0) {
+                    memory_order_arg = "std::memory_order_seq_cst(default)";
+                }
+                memory_order_args.push_back(memory_order_arg);
+            } else {
+                continue;
+            }
+        }
+
+        if (memory_order_args.empty()) {
+            continue;
+        }
+        
+        string func_name = callee->getNameAsString();
+        unsigned line_num = Context->getSourceManager().getSpellingLineNumber(match.Node->getExprLoc());
+        auto persumed_loc = Context->getSourceManager().getPresumedLoc(match.Node->getExprLoc());
+        const char* file_name = persumed_loc.getFilename();
+
+        if(isDependentHeader(file_name))
+            continue;
+
+        ordered_json j;
+        j[memory_order_list_key_] = memory_order_args;
+        j[line_number_key_] = line_num;
+        j[file_name_key_] = file_name;
+        js[func_name].emplace_back(j);
     }
 
     Features[memory_order_key_] = js;

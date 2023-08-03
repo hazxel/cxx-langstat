@@ -25,6 +25,7 @@ int main()
     acnt.fetch_add(1, std::memory_order_relaxed);
     acnt.compare_exchange_weak(a, b, std::memory_order_relaxed, std::memory_order_relaxed);
     acnt.load();
+    std::atomic_fetch_add_explicit(&acnt, 1, std::memory_order_relaxed);
 
     std::atomic<int> aacnt;
     aacnt.load();
