@@ -4,6 +4,8 @@
 #include <atomic>
 #include <mutex>
 #include <string>
+#include <barrier>
+#include <latch>
  
 int main()
 {
@@ -43,4 +45,8 @@ int main()
     std::string s;
     s.append("a");
     s[0] = 'b';
+
+    std::latch workDone(6);
+    std::latch goHome(1);            
+
 }

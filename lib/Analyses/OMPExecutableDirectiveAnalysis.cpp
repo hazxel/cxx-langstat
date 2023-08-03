@@ -30,6 +30,23 @@ void OMPExecutableDirectiveAnalysis::analyzeFeatures(){
         unsigned endLineNum = Context->getSourceManager().getSpellingLineNumber(match.Node->getEndLoc());
         std::string fileName = Context->getSourceManager().getFilename(match.Node->getBeginLoc()).str();
 
+        auto atomicDir = dyn_cast<OMPAtomicDirective>(match.Node);
+        if (atomicDir) {
+            unsigned numofClauses = atomicDir->getNumClauses();
+            for (int i = 0; i < numofClauses; ++i) {
+                OMPClause *clause = atomicDir->getClause(i);
+                if (dyn_cast<OMPUpdateClause>(clause)) {
+                    dirName += "Update";
+                } else if (dyn_cast<OMPCaptureClause>(clause)) {
+                    dirName += "Capture";
+                } else if (dyn_cast<OMPReadClause>(clause)) {
+                    dirName += "Read";
+                } else if (dyn_cast<OMPWriteClause>(clause)) {
+                    dirName += "Write";
+                }
+            }
+        }
+
         if (isDependentHeader(fileName)) {
             continue;
         }
