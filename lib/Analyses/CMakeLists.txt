@@ -3,12 +3,16 @@ add_library(Analyses
     AtomicMemoryOrderAnalysis.cpp
     ClassInstantiationAnalysis.cpp
     ClassMethodCallAnalysis.cpp
+    ClassMethodCallTranslationUnitAnalysis.cpp
     ConcurrencySupportLibraryAnalysis.cpp
     ConcurrencySupportLibraryMethodAnalysis.cpp
+    ConcurrencySupportLibraryMethodTranlationUnitAnalysis.cpp
     ConstexprAnalysis.cpp
     ContainerLibAnalysis.cpp
     CyclomaticComplexityAnalysis.cpp
     DataContainerAnalysis.cpp
+    DataContainerTranslationUnitAnalysis.cpp
+    OMPExecutableDirectiveTranslationUnitAnalysis.cpp
     STLMutexScopeAnalysis.cpp
     ScopeAnalysis.cpp
     FunctionParameterAnalysis.cpp

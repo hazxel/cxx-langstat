@@ -7,12 +7,16 @@
 #include "cxx-langstat/Analyses/AtomicMemoryOrderAnalysis.h"
 #include "cxx-langstat/Analyses/ClassInstantiationAnalysis.h"
 #include "cxx-langstat/Analyses/ClassMethodCallAnalysis.h"
+#include "cxx-langstat/Analyses/ClassMethodCallTranslationUnitAnalysis.h"
 #include "cxx-langstat/Analyses/ConcurrencySupportLibraryAnalysis.h"
 #include "cxx-langstat/Analyses/ConcurrencySupportLibraryMethodAnalysis.h"
+#include "cxx-langstat/Analyses/ConcurrencySupportLibraryMethodTranslationUnitAnalysis.h"
 #include "cxx-langstat/Analyses/ConstexprAnalysis.h"
 #include "cxx-langstat/Analyses/CyclomaticComplexityAnalysis.h"
 #include "cxx-langstat/Analyses/ContainerLibAnalysis.h"
 #include "cxx-langstat/Analyses/DataContainerAnalysis.h"
+#include "cxx-langstat/Analyses/DataContainerTranslationUnitAnalysis.h"
+#include "cxx-langstat/Analyses/OMPExecutableDirectiveTranslationUnitAnalysis.h"
 #include "cxx-langstat/Analyses/STLMutexScopeAnalysis.h"
 #include "cxx-langstat/Analyses/ScopeAnalysis.h"
 #include "cxx-langstat/Analyses/FunctionParameterAnalysis.h"
@@ -60,12 +64,20 @@ void AnalysisRegistry::createFreshAnalyses(){
         Analyses.emplace_back(std::make_unique<ContainerLibAnalysis>());
     if(Options.EnabledAnalyses.contains("cmca"))
         Analyses.emplace_back(std::make_unique<ClassMethodCallAnalysis>());
+    if(Options.EnabledAnalyses.contains("cmcatu"))
+        Analyses.emplace_back(std::make_unique<ClassMethodCallTranslationUnitAnalysis>());
     if(Options.EnabledAnalyses.contains("csla"))
         Analyses.emplace_back(std::make_unique<ConcurrencySupportLibraryAnalysis>());
     if(Options.EnabledAnalyses.contains("cslma"))
         Analyses.emplace_back(std::make_unique<ConcurrencySupportLibraryMethodAnalysis>());
+    if(Options.EnabledAnalyses.contains("cslmatu"))
+        Analyses.emplace_back(std::make_unique<ConcurrencySupportLibraryMethodTranslationUnitAnalysis>());
     if(Options.EnabledAnalyses.contains("dca"))
         Analyses.emplace_back(std::make_unique<DataContainerAnalysis>());
+    if(Options.EnabledAnalyses.contains("dcatu"))
+        Analyses.emplace_back(std::make_unique<DataContainerTranslationUnitAnalysis>());
+    if(Options.EnabledAnalyses.contains("ompedatu"))
+        Analyses.emplace_back(std::make_unique<OMPExecutableDirectiveTranslationUnitAnalysis>());
     if(Options.EnabledAnalyses.contains("sa"))
         Analyses.emplace_back(std::make_unique<ScopeAnalysis>());
     if(Options.EnabledAnalyses.contains("fpa"))
