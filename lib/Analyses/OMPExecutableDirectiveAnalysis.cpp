@@ -43,6 +43,16 @@ void OMPExecutableDirectiveAnalysis::analyzeFeatures(){
                     dirName += "Read";
                 } else if (dyn_cast<OMPWriteClause>(clause)) {
                     dirName += "Write";
+                } else if (dyn_cast<OMPSeqCstClause>(clause)) {
+                    dirName += "SeqCst";
+                } else if (dyn_cast<OMPAcqRelClause>(clause)) {
+                    dirName += "AcqRel";
+                } else if (dyn_cast<OMPReleaseClause>(clause)) {
+                    dirName += "Release";
+                } else if (dyn_cast<OMPAcquireClause>(clause)) {
+                    dirName += "Acquire";
+                } else if (dyn_cast<OMPRelaxedClause>(clause)) {
+                    dirName += "Relaxed";
                 }
             }
         }
